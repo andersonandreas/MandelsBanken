@@ -3,13 +3,18 @@
     internal class Transaction
     {
         public int Id { get; set; }
+        public decimal TransactionAmount { get; set; }
+        public decimal Balance { get; set; } // Balance after the transcation
+        public string? Description { get; set; }
         public DateTime Date { get; set; }
-        public double Amount { get; set; }
-        public double CurrentBalance { get; set; }
 
+        //FK
+        public int AccountId { get; set; }
 
-        // navaiton property = foreign key 
+        // Navigation property
         public virtual Account Account { get; set; }
 
     }
 }
+
+

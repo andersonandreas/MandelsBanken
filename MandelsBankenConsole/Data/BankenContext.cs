@@ -6,10 +6,10 @@ namespace MandelsBankenConsole.Data
 {
     internal class BankenContext : DbContext
     {
-        DbSet<User> Users { get; set; }
-        DbSet<Account> Accounts { get; set; }
-        DbSet<Transaction> Transaction { get; set; }
-        DbSet<Currency> Currency { get; set; }
+        public DbSet<Account> Accounts { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
+        public DbSet<Currency> Currencies { get; set; }
 
 
 
