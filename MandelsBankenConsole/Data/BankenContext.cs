@@ -17,7 +17,7 @@ namespace MandelsBankenConsole.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Data Source=(localdb)\\.;Initial Catalog=BankenTest;Integrated Security=True;Pooling=False");
+            optionsBuilder.UseSqlServer(""); //Add your connection string here :)
         }
 
     }
