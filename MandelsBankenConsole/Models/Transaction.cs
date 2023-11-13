@@ -10,9 +10,11 @@
 
         //FK
         public int AccountId { get; set; }
+        public int CurrencyId { get; set; } // Currency of the transaction
 
         // Navigation property
         public virtual Account Account { get; set; }
+        public virtual Currency Currency { get; set; }
 
     }
 }
