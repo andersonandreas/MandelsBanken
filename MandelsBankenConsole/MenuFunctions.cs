@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MandelsBankenConsole
+﻿namespace MandelsBankenConsole
 {
-    internal class MenuFunctions
+    internal static class MenuFunctions
     {
         public static void ShowMenu()
         {
@@ -93,5 +87,42 @@ namespace MandelsBankenConsole
             }
             return true;
         }
+
+
+        public static void LogIn()
+        {
+            Console.WriteLine("Welcome to Mandelsbank!");
+            Thread.Sleep(1000);
+
+            Console.WriteLine("Making banking smooth as almond milk");
+            Thread.Sleep(1000);
+
+            Console.WriteLine("Please log in");
+
+            Console.Write("Enter user name:");
+            string userName = Console.ReadLine();
+
+            Console.Write("Enter pin code:");
+            string pin = Console.ReadLine();
+
+            if (userName == "admin")
+            {
+                if (pin != "1234")
+                {
+                    Console.WriteLine("Wrong password!");
+                    return;
+                }
+
+                AdminFunctions.DoAdminTasks();
+                return;
+            }
+            else //We need to add user-log in before letting them into this user-menu. Just made it kinda functional for now :)
+            {
+
+                ShowMenu();
+            }
+        }
+
+
     }
 }

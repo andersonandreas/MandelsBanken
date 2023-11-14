@@ -1,39 +1,43 @@
-﻿namespace MandelsBankenConsole
+﻿using MandelsBankenConsole.API;
+using MandelsBankenConsole.CurrencyConverter;
+using MandelsBankenConsole.InputValidator;
+
+namespace MandelsBankenConsole
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            Console.WriteLine("Welcome to Mandelsbank!");
-            Thread.Sleep(1000);
 
-            Console.WriteLine("Making banking smooth as almond milk");
-            Thread.Sleep(1000);
+            IAPIDataReaderCurrency apiDataReader = new APIDataReaderCurrency();
+            IValidateUserInput userInputValidator = new ValidateUserInput(
+                new CharValidator(),
+                new NumberValidator());
 
-            Console.WriteLine("Please log in");
+            CurrencyHandler exchangeHandler = new CurrencyHandler(
+                userInputValidator,
+                apiDataReader);
 
-            Console.Write("Enter user name:");
-            string userName = Console.ReadLine();
 
-            Console.Write("Enter pin code:");
-            string pin = Console.ReadLine();
+            // This tuple method (ConvertResult, Information) return both a decimal value (the result from the exchange),
+            // and a string with the information for the transaction description. 
 
-            if (userName == "admin")
-            {
-                if (pin != "1234")
-                {
-                    Console.WriteLine("Wrong password!");
-                    return;
-                }
+            // !!!!!!!!!!!!!!!!!!!! comment this code out when you not working with the API. !!!!!!!!!!!!!!!!!!!!
+            var (ConvertResult, Information) = await exchangeHandler.RunExchange();
 
-                AdminFunctions.DoAdminTasks();
-                return;
-            }
-            else //We need to add user-log in before letting them into this user-menu. Just made it kinda functional for now :)
-            {
-                MenuFunctions menu = new MenuFunctions();
-                MenuFunctions.ShowMenu();
-            }
+
+            // The new value after the exchange in decimal
+            Console.WriteLine(ConvertResult);
+
+            // The information from the convert. save to the decription in the transaction
+            Console.WriteLine(Information);
+
+
+
+            // logging in menu
+            //MenuFunctions.LogIn();
+
         }
     }
+
 }
