@@ -5,7 +5,7 @@
     {
 
         const string BaseUrl = "https://v6.exchangerate-api.com/v6/";
-        const string APIKey = "0fda422e2537ee416d3bc40e";   // anvand era nycklar fron erat konto istllet do man enbart har 1500 calls per manad.
+        const string APIKey = "0fda422e2537ee416d3bc40e";   // account created for our needs
 
         public async Task<string> Read(string baseCurrency, string targetCurrency, decimal amount)
         {

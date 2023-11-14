@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace MandelsBankenConsole.Utilities
 {
@@ -29,6 +30,18 @@ namespace MandelsBankenConsole.Utilities
                 return false;
             }
             return true;
+        }
+
+        public static List<Account> GetAllAccounts(BankenContext context, User user)
+        {
+
+            List<Account> accounts = context.Users
+                .Where(u => u.Id == user.Id)
+                .Include(u => u.Accounts)
+                .Single()
+                .Accounts
+                .ToList();
+            return accounts;
         }
     }
 }

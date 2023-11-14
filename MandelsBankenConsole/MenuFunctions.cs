@@ -2,16 +2,13 @@
 {
     internal static class MenuFunctions
     {
-        public static void ShowMenu()
+        public static void ShowMenu(string[] menuOptions)
         {
-            string[] menuOptions = {
-                "See your accounts and balance",
-                "Transfer between accounts",
-                "Withdraw money",
-                "Deposit money",
-                "Open a new account",
-                "Log out"
-            };
+            // Magda.ideer:
+            // -- vi ska ha en inramning
+            // högst upp ska det alltid stå Mandelsbanken + motto
+            // längst ner ska det alltid stå "press Q to log out" or sth
+
 
             int selectedIndex = 0;
 
@@ -91,7 +88,7 @@
 
         public static void LogIn()
         {
-            Console.WriteLine("Welcome to Mandelsbank!");
+            Console.WriteLine("Welcome to Mandelsbanken!");
             Thread.Sleep(1000);
 
             Console.WriteLine("Making banking smooth as almond milk");
@@ -118,8 +115,18 @@
             }
             else //We need to add user-log in before letting them into this user-menu. Just made it kinda functional for now :)
             {
+                // Magda: not sure if its a better place for this array but we need to make ShowMenu more reusable
+                // i think we can have that separately..
+                string[] userMenuOptions = {
+                    "See your accounts and balance",
+                    "Transfer between accounts",
+                    "Withdraw money",
+                    "Deposit money",
+                    "Open a new account",
+                    "Log out"
+                };
 
-                ShowMenu();
+                ShowMenu(userMenuOptions);
             }
         }
 

@@ -35,7 +35,7 @@ namespace MandelsBankenConsole
 
 
             // logging in menu
-            //MenuFunctions.LogIn();
+            MenuFunctions.LogIn();
 
         }
     }
