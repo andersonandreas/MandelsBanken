@@ -1,21 +1,18 @@
 ﻿namespace MandelsBankenConsole.Models
 {
-    internal class Transaction
+    public class Transaction
     {
         public int Id { get; set; }
         public decimal TransactionAmount { get; set; }
-        public decimal Balance { get; set; } // Balance after the transcation
-        public string? Description { get; set; }
+        public decimal Balance { get; set; }
+        public string Description { get; set; }
         public DateTime Date { get; set; }
 
-        //FK
+        // FK
         public int AccountId { get; set; }
-        public int CurrencyId { get; set; } // Currency of the transaction
 
         // Navigation property
         public virtual Account Account { get; set; }
-        public virtual Currency Currency { get; set; }
-
     }
 }
 

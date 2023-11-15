@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MandelsBankenConsole.Migrations
 {
     [DbContext(typeof(BankenContext))]
-    [Migration("20231109143402_Init")]
+    [Migration("20231115192030_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -76,9 +76,6 @@ namespace MandelsBankenConsole.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("ExchangeRate")
-                        .HasColumnType("decimal(18,2)");
-
                     b.HasKey("Id");
 
                     b.ToTable("Currencies");
@@ -102,6 +99,7 @@ namespace MandelsBankenConsole.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("TransactionAmount")
@@ -142,7 +140,7 @@ namespace MandelsBankenConsole.Migrations
             modelBuilder.Entity("MandelsBankenConsole.Models.Account", b =>
                 {
                     b.HasOne("MandelsBankenConsole.Models.Currency", "Currency")
-                        .WithMany()
+                        .WithMany("Accounts")
                         .HasForeignKey("CurrencyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -172,6 +170,11 @@ namespace MandelsBankenConsole.Migrations
             modelBuilder.Entity("MandelsBankenConsole.Models.Account", b =>
                 {
                     b.Navigation("Transactions");
+                });
+
+            modelBuilder.Entity("MandelsBankenConsole.Models.Currency", b =>
+                {
+                    b.Navigation("Accounts");
                 });
 
             modelBuilder.Entity("MandelsBankenConsole.Models.User", b =>

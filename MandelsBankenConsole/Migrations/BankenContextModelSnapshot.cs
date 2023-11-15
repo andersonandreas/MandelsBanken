@@ -93,13 +93,11 @@ namespace MandelsBankenConsole.Migrations
                     b.Property<decimal>("Balance")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("CurrencyId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("TransactionAmount")
@@ -108,8 +106,6 @@ namespace MandelsBankenConsole.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AccountId");
-
-                    b.HasIndex("CurrencyId");
 
                     b.ToTable("Transactions");
                 });
@@ -142,7 +138,7 @@ namespace MandelsBankenConsole.Migrations
             modelBuilder.Entity("MandelsBankenConsole.Models.Account", b =>
                 {
                     b.HasOne("MandelsBankenConsole.Models.Currency", "Currency")
-                        .WithMany()
+                        .WithMany("Accounts")
                         .HasForeignKey("CurrencyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -166,20 +162,17 @@ namespace MandelsBankenConsole.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MandelsBankenConsole.Models.Currency", "Currency")
-                        .WithMany()
-                        .HasForeignKey("CurrencyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Account");
-
-                    b.Navigation("Currency");
                 });
 
             modelBuilder.Entity("MandelsBankenConsole.Models.Account", b =>
                 {
                     b.Navigation("Transactions");
+                });
+
+            modelBuilder.Entity("MandelsBankenConsole.Models.Currency", b =>
+                {
+                    b.Navigation("Accounts");
                 });
 
             modelBuilder.Entity("MandelsBankenConsole.Models.User", b =>

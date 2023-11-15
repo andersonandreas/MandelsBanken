@@ -4,7 +4,7 @@ using MandelsBankenConsole.InputValidator;
 
 namespace MandelsBankenConsole
 {
-    internal partial class Program
+    internal class Program
     {
         static async Task Main(string[] args)
         {
@@ -18,52 +18,25 @@ namespace MandelsBankenConsole
                 userInputValidator,
                 apiDataReader);
 
-
             ExchangeCurrency transaction = new ExchangeCurrency(exchangeHandler);
 
 
-            var (resultdecimal, info) = await transaction.ConvertCurrency("usd", "sek", 500000);
-            Console.WriteLine(resultdecimal.ToString());
-            Console.WriteLine(info);
-
+            // user log in method 
 
             MenuFunctions.LogIn();
 
 
 
+            // method for converting 
+            var (resultIndecimal, infoDescription) = await transaction.ConvertCurrency("usd", "sek", 500000);
 
-
-        }
-
-        public class ExchangeCurrency
-        {
-
-            private readonly CurrencyHandler _exchangeHandler;
-
-            public ExchangeCurrency(CurrencyHandler exchangeHandler)
-            {
-                _exchangeHandler = exchangeHandler;
-            }
-
-
-            public async Task<(decimal, string)> ConvertCurrency(string baseCurrency, string targetCurrency, decimal amount)
-            {
-                var (convertResult, InfoForDesc) = await _exchangeHandler.ConvertBetweenCurrencies(
-                    baseCurrency.ToUpper(),
-                    targetCurrency.ToUpper(),
-                    amount);
-
-
-                //put your other methods here and input this values into it.
-                //convertResult = decimal value after conversion
-                //InfoForDesc = string with the description
-                //just logging for show.can remove it, if you dont need it.
+            await Console.Out.WriteLineAsync(resultIndecimal.ToString());
+            await Console.Out.WriteLineAsync(infoDescription);
 
 
 
-                return (convertResult, InfoForDesc);
 
-            }
+
         }
     }
 
