@@ -4,7 +4,7 @@ using MandelsBankenConsole.InputValidator;
 
 namespace MandelsBankenConsole
 {
-    internal class Program
+    internal partial class Program
     {
         static async Task Main(string[] args)
         {
@@ -19,24 +19,51 @@ namespace MandelsBankenConsole
                 apiDataReader);
 
 
-            // This tuple method (ConvertResult, Information) return both a decimal value (the result from the exchange),
-            // and a string with the information for the transaction description. 
-
-            // !!!!!!!!!!!!!!!!!!!! comment this code out when you not working with the API. !!!!!!!!!!!!!!!!!!!!
-            var (ConvertResult, Information) = await exchangeHandler.RunExchange();
+            ExchangeCurrency transaction = new ExchangeCurrency(exchangeHandler);
 
 
-            // The new value after the exchange in decimal
-            Console.WriteLine(ConvertResult);
+            var (resultdecimal, info) = await transaction.ConvertCurrency("usd", "sek", 500000);
+            Console.WriteLine(resultdecimal.ToString());
+            Console.WriteLine(info);
 
-            // The information from the convert. save to the decription in the transaction
-            Console.WriteLine(Information);
+
+            MenuFunctions.LogIn();
 
 
 
-            // logging in menu
-            //MenuFunctions.LogIn();
 
+
+        }
+
+        public class ExchangeCurrency
+        {
+
+            private readonly CurrencyHandler _exchangeHandler;
+
+            public ExchangeCurrency(CurrencyHandler exchangeHandler)
+            {
+                _exchangeHandler = exchangeHandler;
+            }
+
+
+            public async Task<(decimal, string)> ConvertCurrency(string baseCurrency, string targetCurrency, decimal amount)
+            {
+                var (convertResult, InfoForDesc) = await _exchangeHandler.ConvertBetweenUserAccount(
+                    baseCurrency.ToUpper(),
+                    targetCurrency.ToUpper(),
+                    amount);
+
+
+                //put your other methods here and input this values into it.
+                //convertResult = decimal value after conversion
+                //InfoForDesc = string with the description
+                //just logging for show.can remove it, if you dont need it.
+
+
+
+                return (convertResult, InfoForDesc);
+
+            }
         }
     }
 

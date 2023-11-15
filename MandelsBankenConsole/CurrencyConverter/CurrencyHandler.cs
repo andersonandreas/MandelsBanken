@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace MandelsBankenConsole.CurrencyConverter
 {
-    public class CurrencyHandler
+    public class CurrencyHandler : ICurrencyHandler
     {
 
         private readonly IValidateUserInput _userInputValidator;
@@ -16,6 +16,29 @@ namespace MandelsBankenConsole.CurrencyConverter
         {
             _userInputValidator = userInputValidator;
             _apiDataReader = apiDataReader;
+        }
+
+        public async Task<(decimal ConvertResult, string Information)> ConvertBetweenUserAccount(string baseCurrency, string targetCurrency, decimal amount)
+        {
+
+            try
+            {
+
+                var json = await _apiDataReader.Read(baseCurrency, targetCurrency, amount);
+                var ConvertResult = Result(json);
+                var information = ConvertInfo(baseCurrency, targetCurrency, amount, ConvertResult);
+
+                return (ConvertResult, information);
+            }
+            catch (Exception ex)
+            {
+                // add more spec error message to console
+                Console.WriteLine($"Error: {ex.Message}");
+                throw;
+
+            }
+
+
         }
 
         public async Task<(decimal ConvertResult, string Information)> RunExchange()

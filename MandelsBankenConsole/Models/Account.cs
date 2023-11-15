@@ -2,7 +2,7 @@
 {
     internal class Account
     {
-        public int Id { get; set; }
+        public int ID { get; set; }
         public int AccountNumber { get; set; }
         public string AccountName { get; set; }
         public AccountType Type { get; set; }

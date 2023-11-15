@@ -13,11 +13,19 @@ namespace MandelsBankenConsole.Data
 
 
 
+        //protected override void OnModelCreating(ModelBuilder modelBuilder)
+        //{
+        //    modelBuilder.Entity<Account>().HasKey(x => x.id);
+
+        //    // Other configurations...
+
+        //    base.OnModelCreating(modelBuilder);
+        //}
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Data Source=(localdb)\\.;Initial Catalog=Banken;Integrated Security=True;Pooling=False"); //Add your connection string here :)
+            optionsBuilder.UseSqlServer("Data Source=(localdb)\\.;Initial Catalog=BankSchool;Integrated Security=True;Pooling=False"); //Add your connection string here :)
         }
 
     }
