@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -17,7 +16,7 @@ namespace MandelsBankenConsole.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CurrencyName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CurrencyCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ExchangeRate = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+
                 },
                 constraints: table =>
                 {
