@@ -15,7 +15,7 @@ namespace MandelsBankenConsole
             //
             public async Task MakeTranscation(string baseCurrency, string targetCurrency, decimal amount)
             {
-                var (convertResult, InfoForDesc) = await _exchangeHandler.ConvertBetweenUserAccount(
+                var (convertResult, InfoForDesc) = await _exchangeHandler.ConvertBetweenCurrencies(
                     baseCurrency.ToUpper(),
                     targetCurrency.ToUpper(),
                     amount);

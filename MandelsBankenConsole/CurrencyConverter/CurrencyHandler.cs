@@ -18,7 +18,7 @@ namespace MandelsBankenConsole.CurrencyConverter
             _apiDataReader = apiDataReader;
         }
 
-        public async Task<(decimal ConvertResult, string Information)> ConvertBetweenUserAccount(string baseCurrency, string targetCurrency, decimal amount)
+        public async Task<(decimal ConvertResult, string Information)> ConvertBetweenCurrencies(string baseCurrency, string targetCurrency, decimal amount)
         {
 
             try
