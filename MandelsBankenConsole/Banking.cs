@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MandelsBankenConsole
 {
-    internal static class Banking
+    internal class Banking
     {
         public static void BankTransfer(/*BankenContext context, User user*/)
         {
@@ -25,14 +25,33 @@ namespace MandelsBankenConsole
             var context = new BankenContext();
             User user1 = context.Users.Where(i => i.Id == 3).Single();
             List<Account> accounts = DbHelper.GetAllAccounts(context, user1);
-
-            // list of options for the user to choose from
             List<string> accountsDesc = DbHelper.GetAccountInformation(accounts);
-            accountsDesc.Add("Transfer to another person");
-            MenuFunctions.ShowMenu(accountsDesc.ToArray(),"Which account do you want to tranfer from?");
+
+            // if no accounts, go back to menu
+            if (accounts.Count == 0)
+            {
+                Console.WriteLine("You dont have any accounts yet :(");
+            }
+            // if more than 1 account, choose from the list
+            else if (accounts.Count > 1)
+            {
+                MenuFunctions.ShowMenu(accountsDesc.ToArray(), "Which account do you want to tranfer from?", ChooseAccount);
+            }
+            
+            // if user only has 1 account, this is the "from-account"
+
 
             // list of accounts to transfer TO + option to transfer to somebody else
+            List<string> accountsTo = DbHelper.GetAccountInformation(accounts);
+            accountsDesc.Add("Transfer to another person");
+            MenuFunctions.ShowMenu(accountsDesc.ToArray(), "Which account do you want to tranfer to?");
 
+        }
+
+        public static bool ChooseAccount(int optionIndex)
+        {
+            Console.WriteLine("Chosen account: " + optionIndex);
+            return true;
         }
 
     }

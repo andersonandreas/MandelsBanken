@@ -2,7 +2,9 @@
 {
     internal static class MenuFunctions
     {
-        public static void ShowMenu(string[] menuOptions, string title="Menu")
+        public delegate bool MenuAction(int optionIndex);
+
+        public static void ShowMenu(string[] menuOptions, string title="Menu", MenuAction actionMethod = null)
         {
             // Magda.ideer:
             // -- vi ska ha en inramning
@@ -11,11 +13,15 @@
 
 
             int selectedIndex = 0;
+            
+            // in case no other actionMethod is entered, use ExecuteMenuOption
+            actionMethod = actionMethod ?? ExecuteMenuOption;
+
 
             while (true)
             {
                 Console.Clear();
-                Console.WriteLine(title);
+                Console.WriteLine();
 
                 for (int i = 0; i < menuOptions.Length; i++)
                 {
@@ -43,7 +49,7 @@
                         break;
                     case ConsoleKey.Enter:
                         Console.Clear();
-                        if (!ExecuteMenuOption(selectedIndex))
+                        if (!actionMethod(selectedIndex))
                         {
                             break;
                         }
