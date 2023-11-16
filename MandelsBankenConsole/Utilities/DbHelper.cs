@@ -35,14 +35,20 @@ namespace MandelsBankenConsole.Utilities
         public static List<Account> GetAllAccounts(BankenContext context, User user)
         {
 
-            List<Account> accounts = context.Users
-                .Where(u => u.Id == user.Id)
-                .Include(u => u.Accounts)
-                .Single()
-                .Accounts
-                .ToList();
-            return accounts;
+            return context.Accounts
+               .Include(acc => acc.Currency) // ChatGPT helped with adding Currency here cause of nullable fields
+               .Where(acc => acc.UserId == user.Id)
+               .ToList();
+            
         }
+
+        public static List<string> GetAccountInformation(List<Account> accounts)
+        {
+            return accounts
+                .Select(a => $"Account number: {a.AccountNumber}\tType: {a.Type}\tBalance: {a.Balance} {a.Currency.CurrencyCode}")
+                .ToList();
+        }
+
 
         public static int ReturnCurrencyIdFromCode(BankenContext context, string currencyCode)
         {
@@ -52,5 +58,8 @@ namespace MandelsBankenConsole.Utilities
                 .Single();
 
         }
+
+      
+
     }
 }

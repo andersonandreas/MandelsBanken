@@ -2,7 +2,7 @@
 {
     internal static class MenuFunctions
     {
-        public static void ShowMenu(string[] menuOptions)
+        public static void ShowMenu(string[] menuOptions, string title="Menu")
         {
             // Magda.ideer:
             // -- vi ska ha en inramning
@@ -15,7 +15,7 @@
             while (true)
             {
                 Console.Clear();
-                Console.WriteLine("Menu");
+                Console.WriteLine(title);
 
                 for (int i = 0; i < menuOptions.Length; i++)
                 {
@@ -63,6 +63,7 @@
                     break;
                 case 1:
                     Console.WriteLine("Does second option...");
+                    Banking.BankTransfer();
                     Console.ReadLine();
                     break;
                 case 2:

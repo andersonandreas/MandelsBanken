@@ -11,7 +11,7 @@ namespace MandelsBankenConsole
 {
     internal static class Banking
     {
-        public static void BankTransfer(BankenContext context, User user)
+        public static void BankTransfer(/*BankenContext context, User user*/)
         {
             // user has chosen "Transfer between accounts"
             // we give choice to either transfer between user's own accounts or to another person
@@ -22,18 +22,26 @@ namespace MandelsBankenConsole
             // choose account to transfer to (list of the other accounts + "transfer to another person"
             // questions: validation for another person: do we need personnummer or do we need to know account number?
 
-
-            List<Account> accounts = DbHelper.GetAllAccounts(context, user);
+            var context = new BankenContext();
+            User user1 = context.Users.Where(i => i.Id == 3).Single();
+            List<Account> accounts = DbHelper.GetAllAccounts(context, user1);
             int amountOfAccounts = accounts.Count;
-            string[] accountsDesc = new string[amountOfAccounts]; // placeholder for transfer to another user
+            List<string> accountsDesc = DbHelper.GetAccountInformation(accounts);
+           
+            foreach (string acc in accountsDesc)
+            {
+                Console.WriteLine(acc);
+            }
+            Console.WriteLine(accountsDesc.Count);
+            accountsDesc.Add("Transfer to another person");
+            Console.WriteLine(accountsDesc.Count);
 
-            accountsDesc=accounts
-                .Select(a=>new {xx=a.AccountNumber + ":" +  a.AccountName }.ToString())
-                .ToArray();
 
-            accountsDesc[amountOfAccounts] = "Transfer to another person";
+            foreach ( string acc  in accountsDesc) {
+                Console.WriteLine(acc);
+            }
 
-            MenuFunctions.ShowMenu(accountsDesc);
+            MenuFunctions.ShowMenu(accountsDesc.ToArray(),"Which account do you want to tranfer from?");
 
             // list of accounts to transfer TO + option to transfer to somebody else
 
