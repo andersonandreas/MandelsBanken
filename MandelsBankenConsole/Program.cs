@@ -18,24 +18,25 @@ namespace MandelsBankenConsole
                 userInputValidator,
                 apiDataReader);
 
-
-            // This tuple method (ConvertResult, Information) return both a decimal value (the result from the exchange),
-            // and a string with the information for the transaction description. 
-
-            // !!!!!!!!!!!!!!!!!!!! comment this code out when you not working with the API. !!!!!!!!!!!!!!!!!!!!
-            var (ConvertResult, Information) = await exchangeHandler.RunExchange();
+            ExchangeCurrency transaction = new ExchangeCurrency(exchangeHandler);
 
 
-            // The new value after the exchange in decimal
-            Console.WriteLine(ConvertResult);
+            // user log in method 
 
-            // The information from the convert. save to the decription in the transaction
-            Console.WriteLine(Information);
+            MenuFunctions.LogIn();
+
+
+            // method for converting 
+            var (resultIndecimal, infoDescription) = await transaction.ConvertCurrency("usd", "sek", 500000);
+
+            await Console.Out.WriteLineAsync(resultIndecimal.ToString());
+            await Console.Out.WriteLineAsync(infoDescription);
+
 
 
 
             // logging in menu
-            MenuFunctions.LogIn();
+            //MenuFunctions.LogIn();
 
         }
     }

@@ -1,6 +1,6 @@
 ﻿namespace MandelsBankenConsole.Models
 {
-    internal class Account
+    public class Account
     {
         public int Id { get; set; }
         public int AccountNumber { get; set; }
@@ -13,11 +13,10 @@
         public int CurrencyId { get; set; }
 
         // Navigation properties
-        public virtual Currency Currency { get; set; }
         public virtual User User { get; set; }
+        public virtual Currency Currency { get; set; }
         public virtual ICollection<Transaction> Transactions { get; set; }
     }
-
 
     public enum AccountType
     {

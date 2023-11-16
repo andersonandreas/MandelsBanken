@@ -1,6 +1,6 @@
 ﻿namespace MandelsBankenConsole.Models
 {
-    internal class User
+    public class User
     {
         public int Id { get; set; }
         public string CustomerName { get; set; }
@@ -11,4 +11,9 @@
         public virtual ICollection<Account> Accounts { get; set; }
     }
 }
+
+// A user can have multiple accounts, each account has refernce to a currency,
+// all have a collection of transactions thats unique to that specifec account and all the transactions has a reference to the account it belongs to.
+
+
 
