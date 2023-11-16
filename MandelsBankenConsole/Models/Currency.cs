@@ -7,7 +7,7 @@
         public string CurrencyCode { get; set; }
 
         // Navigation property
-        public virtual ICollection<Account> Accounts { get; set; } = new List<Account>();
+        public virtual ICollection<Account> Accounts { get; set; }
     }
 }
 

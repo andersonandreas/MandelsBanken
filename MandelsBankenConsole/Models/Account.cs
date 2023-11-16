@@ -15,7 +15,7 @@
         // Navigation properties
         public virtual User User { get; set; }
         public virtual Currency Currency { get; set; }
-        public virtual ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
+        public virtual ICollection<Transaction> Transactions { get; set; }
     }
 
     public enum AccountType

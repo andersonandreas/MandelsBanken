@@ -26,7 +26,6 @@ namespace MandelsBankenConsole
             MenuFunctions.LogIn();
 
 
-
             // method for converting 
             var (resultIndecimal, infoDescription) = await transaction.ConvertCurrency("usd", "sek", 500000);
 
