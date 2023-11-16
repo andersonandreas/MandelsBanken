@@ -25,22 +25,10 @@ namespace MandelsBankenConsole
             var context = new BankenContext();
             User user1 = context.Users.Where(i => i.Id == 3).Single();
             List<Account> accounts = DbHelper.GetAllAccounts(context, user1);
-            int amountOfAccounts = accounts.Count;
+
+            // list of options for the user to choose from
             List<string> accountsDesc = DbHelper.GetAccountInformation(accounts);
-           
-            foreach (string acc in accountsDesc)
-            {
-                Console.WriteLine(acc);
-            }
-            Console.WriteLine(accountsDesc.Count);
             accountsDesc.Add("Transfer to another person");
-            Console.WriteLine(accountsDesc.Count);
-
-
-            foreach ( string acc  in accountsDesc) {
-                Console.WriteLine(acc);
-            }
-
             MenuFunctions.ShowMenu(accountsDesc.ToArray(),"Which account do you want to tranfer from?");
 
             // list of accounts to transfer TO + option to transfer to somebody else
