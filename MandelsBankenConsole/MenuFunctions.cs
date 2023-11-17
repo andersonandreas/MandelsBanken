@@ -23,6 +23,7 @@ namespace MandelsBankenConsole
             Console.Write("Enter pin code:");
             string pin = Console.ReadLine();
 
+            int choice = 0;
             if (userLogInInput == "admin")
             {
                 if (pin != "1234")
@@ -47,27 +48,36 @@ namespace MandelsBankenConsole
                     Console.Clear();
                     Console.WriteLine($"Welcome {loggedInUser.CustomerName}!");
                     Thread.Sleep(750);
-                    ShowMenu();
+                    string[] userMenuOptions = {
+                        "See your accounts and balance",
+                        "Transfer between accounts",
+                        "Withdraw money",
+                        "Deposit money",
+                        "Open a new account",
+                        "Log out"
+                        };
+                    while (true)
+                    {
+                        choice = ShowMenu(userMenuOptions);
+                        ExecuteMenuOption(choice);
+                    }
                 }
             }
         }
-        public static void ShowMenu()
+        public static int ShowMenu(string[] menuOptions, string title = "Menu")
         {
-            string[] menuOptions = {
-            "See your accounts and balance",
-            "Transfer between accounts",
-            "Withdraw money",
-            "Deposit money",
-            "Open a new account",
-            "Log out"
-             };
+            // Magda.ideer:
+            // -- vi ska ha en inramning
+            // högst upp ska det alltid stå Mandelsbanken + motto
+            // längst ner ska det alltid stå "press Q to log out" or sth
+
 
             int selectedIndex = 0;
 
             while (true)
             {
                 Console.Clear();
-                Console.WriteLine("Menu");
+                Console.WriteLine(title);
 
                 for (int i = 0; i < menuOptions.Length; i++)
                 {
@@ -95,11 +105,7 @@ namespace MandelsBankenConsole
                         break;
                     case ConsoleKey.Enter:
                         Console.Clear();
-                        if (!ExecuteMenuOption(selectedIndex))
-                        {
-                            break;
-                        }
-                        break;
+                        return selectedIndex;
 
                 }
             }
