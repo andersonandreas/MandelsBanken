@@ -1,36 +1,35 @@
-﻿using MandelsBankenConsole.API;
-using MandelsBankenConsole.CurrencyConverter;
+﻿using MandelsBankenConsole.Data;
 using MandelsBankenConsole.InputValidator;
+using MandelsBankenConsole.UserHandler;
 
 namespace MandelsBankenConsole
 {
-    internal class Program
+    public class Program
     {
         static async Task Main(string[] args)
         {
-
-            IAPIDataReaderCurrency apiDataReader = new APIDataReaderCurrency();
+            var context = new BankenContext();
+            //IAPIDataReaderCurrency apiDataReader = new APIDataReaderCurrency();
             IValidateUserInput userInputValidator = new ValidateUserInput(
                 new CharValidator(),
                 new NumberValidator());
 
-            CurrencyHandler exchangeHandler = new CurrencyHandler(
-                userInputValidator,
-                apiDataReader);
+            //CurrencyHandler exchangeHandler = new CurrencyHandler(
+            //    userInputValidator,
+            //    apiDataReader);
 
-            ExchangeCurrency transaction = new ExchangeCurrency(exchangeHandler);
-
-
-            // user log in method 
-
-            MenuFunctions.LogIn();
+            //ExchangeCurrency transaction = new ExchangeCurrency(exchangeHandler);
 
 
-            // method for converting 
-            var (resultIndecimal, infoDescription) = await transaction.ConvertCurrency("usd", "sek", 500000);
 
-            await Console.Out.WriteLineAsync(resultIndecimal.ToString());
-            await Console.Out.WriteLineAsync(infoDescription);
+
+            // Mine account class. Yours gonna be here so that we can inject them into MenuFunctions class.
+            AccountManager accountManager = new AccountManager(userInputValidator, context, new Random());
+
+            MenuFunctions menuFunctions = new MenuFunctions(context, accountManager);
+
+            menuFunctions.LogIn();
+
 
 
 

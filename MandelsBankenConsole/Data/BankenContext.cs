@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MandelsBankenConsole.Data
 {
-    internal class BankenContext : DbContext
+    public class BankenContext : DbContext
     {
         public DbSet<Account> Accounts { get; set; }
         public DbSet<User> Users { get; set; }
@@ -15,7 +15,7 @@ namespace MandelsBankenConsole.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Data Source=(localdb)\\.;Initial Catalog=Mandelsbanken;Integrated Security=True;Pooling=False"); //Add your own connection string here :)
+            optionsBuilder.UseSqlServer("Data Source=(localdb)\\.;Initial Catalog=MandelBankendb;Integrated Security=True"); //Add your own connection string here :)
         }
 
     }

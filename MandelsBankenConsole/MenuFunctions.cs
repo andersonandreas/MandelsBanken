@@ -1,13 +1,30 @@
 ﻿using MandelsBankenConsole.Data;
 using MandelsBankenConsole.Models;
+using MandelsBankenConsole.UserHandler;
 using MandelsBankenConsole.Utilities;
 
 namespace MandelsBankenConsole
 {
-    internal static class MenuFunctions
+    public class MenuFunctions
     {
+        // removed the static keyword on the methods. its not needed and we cant use the field of loggedInUser and lpass the other method to each others
+        // we need to put all classes that we build here as Depenciys injections
+
+        private readonly BankenContext _bankenContext;
+        private readonly AccountManager _accountManager;
+
+
         private static User loggedInUser;
-        public static void LogIn()
+
+        public MenuFunctions(BankenContext bankenContext, AccountManager accountManager)
+        {
+            _bankenContext = bankenContext;
+            _accountManager = accountManager;
+
+        }
+
+
+        public void LogIn()
         {
             Console.WriteLine("Welcome to Mandelsbank!");
             Thread.Sleep(500);
@@ -36,19 +53,19 @@ namespace MandelsBankenConsole
             }
             else
             {
-                using (BankenContext context = new BankenContext())
-                {
-                    loggedInUser = DbHelper.GetUserByLogInInput(context, userLogInInput);
+                // removed the context here we take the context from the injection so we now the we working with just one connetcion object in the whole project
 
-                    if (loggedInUser == null || loggedInUser.Pin != pin)
-                    {
-                        Console.WriteLine("Invalid username or password!");
-                        return;
-                    }
-                    Console.Clear();
-                    Console.WriteLine($"Welcome {loggedInUser.CustomerName}!");
-                    Thread.Sleep(750);
-                    string[] userMenuOptions = {
+                loggedInUser = DbHelper.GetUserByLogInInput(_bankenContext, userLogInInput);
+
+                if (loggedInUser == null || loggedInUser.Pin != pin)
+                {
+                    Console.WriteLine("Invalid username or password!");
+                    return;
+                }
+                Console.Clear();
+                Console.WriteLine($"Welcome {loggedInUser.CustomerName}!");
+                Thread.Sleep(750);
+                string[] userMenuOptions = {
                         "See your accounts and balance",
                         "Transfer between accounts",
                         "Withdraw money",
@@ -56,15 +73,15 @@ namespace MandelsBankenConsole
                         "Open a new account",
                         "Log out"
                         };
-                    while (true)
-                    {
-                        choice = ShowMenu(userMenuOptions);
-                        ExecuteMenuOption(choice);
-                    }
+                while (true)
+                {
+                    choice = ShowMenu(userMenuOptions);
+                    ExecuteMenuOption(choice);
                 }
+
             }
         }
-        public static int ShowMenu(string[] menuOptions, string title = "Menu")
+        public int ShowMenu(string[] menuOptions, string title = "Menu")
         {
             // Magda.ideer:
             // -- vi ska ha en inramning
@@ -111,7 +128,8 @@ namespace MandelsBankenConsole
             }
         }
 
-        private static bool ExecuteMenuOption(int optionIndex)
+
+        private bool ExecuteMenuOption(int optionIndex)
         {
             switch (optionIndex)
             {
@@ -133,6 +151,7 @@ namespace MandelsBankenConsole
                     break;
                 case 4:
                     Console.WriteLine("Does fifth option...");
+                    _accountManager.RunAccountCreation(loggedInUser);
                     Console.ReadLine();
                     break;
                 case 5:
