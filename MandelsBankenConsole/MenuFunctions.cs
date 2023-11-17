@@ -18,16 +18,16 @@ namespace MandelsBankenConsole
             Console.WriteLine("Please log in");
 
             Console.Write("Enter username (social security number YYYYMMDD-XXXX):");
-            string userName = Console.ReadLine();
+            string userLogInInput = Console.ReadLine();
 
             Console.Write("Enter pin code:");
             string pin = Console.ReadLine();
 
-            if (userName == "admin")
+            if (userLogInInput == "admin")
             {
                 if (pin != "1234")
                 {
-                    Console.WriteLine("Wrong password!");
+                    Console.WriteLine("Invalid password!");
                     return;
                 }
                 AdminFunctions.DoAdminTasks();
@@ -37,7 +37,7 @@ namespace MandelsBankenConsole
             {
                 using (BankenContext context = new BankenContext())
                 {
-                    loggedInUser = DbHelper.GetUserByUsername(context, userName);
+                    loggedInUser = DbHelper.GetUserByLogInInput(context, userLogInInput);
 
                     if (loggedInUser == null || loggedInUser.Pin != pin)
                     {
