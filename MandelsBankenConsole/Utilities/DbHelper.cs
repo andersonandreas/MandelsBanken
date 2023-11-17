@@ -11,6 +11,11 @@ namespace MandelsBankenConsole.Utilities
 {
     internal static class DbHelper
     {
+        public static User GetUserByLogInInput(BankenContext context, string userLogInInput)
+        {
+            return context.Users.SingleOrDefault(u => u.SocialSecurityNumber == userLogInInput);
+        }
+
         public static List<User> GetAllUsers(BankenContext context)
         {
             List<User> users = context.Users.ToList();
