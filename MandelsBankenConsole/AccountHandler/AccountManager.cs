@@ -3,7 +3,6 @@ using MandelsBankenConsole.InputValidator;
 using MandelsBankenConsole.Models;
 
 namespace MandelsBankenConsole.UserHandler
-
 {
     public class AccountManager
     {
@@ -25,28 +24,8 @@ namespace MandelsBankenConsole.UserHandler
         }
 
 
-        // hardcoded for user with id 1 for testing
-        public void RunAccountCreation()
-        {
-
-            User user = MatchingUserIdFromDb(1);
-            var number = GenerateAccountNum();
-            var name = NameAccount();
-            var type = AccountTypeChoice();
-            var initialDepo = _validateUserInput.Amount();
-            var currencyId = IntCurrencyId();
-
-            CreateAccount(user, number, name, type, initialDepo, currencyId);
-        }
-
-
-
-        // need the current sessson user as a parameter
         public void RunAccountCreation(User currentUser)
         {
-            // just for testing
-            Console.WriteLine($"Current logged in user: {currentUser.CustomerName}, id: {currentUser.Id}.");
-
             var number = GenerateAccountNum();
             var name = NameAccount();
             var type = AccountTypeChoice();
@@ -60,8 +39,6 @@ namespace MandelsBankenConsole.UserHandler
         private void CreateAccount(User user, int accountNumber,
             string accountName, AccountType type, decimal initialDepo, int currencyId)
         {
-
-
             try
             {
                 var newAccount = new Account()
@@ -77,7 +54,7 @@ namespace MandelsBankenConsole.UserHandler
 
                 _bankenContext.Accounts.Add(newAccount);
                 _bankenContext.SaveChanges();
-                Console.WriteLine($"{accountName}, ({accountNumber}) is created.");
+                Console.WriteLine($"{user.CustomerName} you opened a new account ({accountName} with account number {accountNumber}).");
             }
 
             catch (Exception e)
@@ -118,7 +95,6 @@ namespace MandelsBankenConsole.UserHandler
         }
 
 
-
         private int IntCurrencyId()
         {
 
@@ -129,25 +105,6 @@ namespace MandelsBankenConsole.UserHandler
              .Select(c => c.Id)
              .FirstOrDefault();
         }
-
-
-
-        // for testing only 
-        private User MatchingUserIdFromDb(int id)
-        {
-            User user = _bankenContext.Users.Find(id);
-
-            if (user == null)
-            {
-                Console.WriteLine("No user in the database with that id..");
-                return null;
-            }
-
-            return user;
-        }
-
-
-
 
     }
 }

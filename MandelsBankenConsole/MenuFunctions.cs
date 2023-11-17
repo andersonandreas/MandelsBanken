@@ -7,6 +7,8 @@ namespace MandelsBankenConsole
 {
     public class MenuFunctions
     {
+
+        //changed the class to public it easier otherwise we need to change all the classes to internal in the whole project
         // removed the static keyword on the methods. its not needed and we cant use the field of loggedInUser and lpass the other method to each others
         // we need to put all classes that we build here as Depenciys injections
 
@@ -22,7 +24,6 @@ namespace MandelsBankenConsole
             _accountManager = accountManager;
 
         }
-
 
         public void LogIn()
         {
