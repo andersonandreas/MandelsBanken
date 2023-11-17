@@ -1,17 +1,66 @@
-﻿namespace MandelsBankenConsole
+﻿using MandelsBankenConsole.Data;
+using MandelsBankenConsole.Models;
+using MandelsBankenConsole.Utilities;
+
+namespace MandelsBankenConsole
 {
     internal static class MenuFunctions
     {
+        private static User loggedInUser;
+        public static void LogIn()
+        {
+            Console.WriteLine("Welcome to Mandelsbank!");
+            Thread.Sleep(500);
+
+            Console.WriteLine("Making banking smooth as almond milk");
+            Thread.Sleep(750);
+
+            Console.WriteLine("Please log in");
+
+            Console.Write("Enter username (social security number YYYYMMDD-XXXX):");
+            string userLogInInput = Console.ReadLine();
+
+            Console.Write("Enter pin code:");
+            string pin = Console.ReadLine();
+
+            if (userLogInInput == "admin")
+            {
+                if (pin != "1234")
+                {
+                    Console.WriteLine("Invalid password!");
+                    return;
+                }
+                AdminFunctions.DoAdminTasks();
+                return;
+            }
+            else
+            {
+                using (BankenContext context = new BankenContext())
+                {
+                    loggedInUser = DbHelper.GetUserByLogInInput(context, userLogInInput);
+
+                    if (loggedInUser == null || loggedInUser.Pin != pin)
+                    {
+                        Console.WriteLine("Invalid username or password!");
+                        return;
+                    }
+                    Console.Clear();
+                    Console.WriteLine($"Welcome {loggedInUser.CustomerName}!");
+                    Thread.Sleep(750);
+                    ShowMenu();
+                }
+            }
+        }
         public static void ShowMenu()
         {
             string[] menuOptions = {
-                "See your accounts and balance",
-                "Transfer between accounts",
-                "Withdraw money",
-                "Deposit money",
-                "Open a new account",
-                "Log out"
-            };
+            "See your accounts and balance",
+            "Transfer between accounts",
+            "Withdraw money",
+            "Deposit money",
+            "Open a new account",
+            "Log out"
+             };
 
             int selectedIndex = 0;
 
@@ -82,47 +131,13 @@
                     break;
                 case 5:
                     Console.WriteLine("Logging out...");
-                    Thread.Sleep(1000);
+                    loggedInUser = null;
+                    Thread.Sleep(500);
+                    Console.Clear();
+                    LogIn();
                     return false;
             }
             return true;
         }
-
-
-        public static void LogIn()
-        {
-            Console.WriteLine("Welcome to Mandelsbank!");
-            Thread.Sleep(1000);
-
-            Console.WriteLine("Making banking smooth as almond milk");
-            Thread.Sleep(1000);
-
-            Console.WriteLine("Please log in");
-
-            Console.Write("Enter user name:");
-            string userName = Console.ReadLine();
-
-            Console.Write("Enter pin code:");
-            string pin = Console.ReadLine();
-
-            if (userName == "admin")
-            {
-                if (pin != "1234")
-                {
-                    Console.WriteLine("Wrong password!");
-                    return;
-                }
-
-                AdminFunctions.DoAdminTasks();
-                return;
-            }
-            else //We need to add user-log in before letting them into this user-menu. Just made it kinda functional for now :)
-            {
-
-                ShowMenu();
-            }
-        }
-
-
     }
 }
