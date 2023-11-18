@@ -128,7 +128,7 @@ namespace MandelsBankenConsole
                     Console.ReadLine();
                     break;
                 case 3:
-                    Console.WriteLine("Does fourth option...");
+                    DepositMoneyFunctions.DepositMoney(loggedInUser);
                     Console.ReadLine();
                     break;
                 case 4:
