@@ -24,25 +24,26 @@ namespace MandelsBankenConsole.UserHandler
         }
 
 
-        public void RunAccountCreation(User currentUser)
+        public void CreateAccount(User currentUser)
         {
             var number = GenerateAccountNum();
-            var name = NameAccount();
+            var name = _validateUserInput.AccountName();
             var type = AccountTypeChoice();
             var initialDepo = _validateUserInput.Amount();
-            var currencyId = IntCurrencyId();
+            var currencyId = IdCurrency();
 
-            CreateAccount(currentUser, number, name, type, initialDepo, currencyId);
+            RunAccountCreation(currentUser, number, name, type, initialDepo, currencyId);
         }
 
 
-        private void CreateAccount(User user, int accountNumber,
+        private void RunAccountCreation(User user, int accountNumber,
             string accountName, AccountType type, decimal initialDepo, int currencyId)
         {
             try
             {
                 var newAccount = new Account()
                 {
+
                     UserId = user.Id,
                     AccountNumber = accountNumber,
                     AccountName = accountName,
@@ -54,7 +55,8 @@ namespace MandelsBankenConsole.UserHandler
 
                 _bankenContext.Accounts.Add(newAccount);
                 _bankenContext.SaveChanges();
-                Console.WriteLine($"{user.CustomerName} you opened a new account ({accountName} with account number {accountNumber}).");
+                Console.WriteLine($"{user.CustomerName} you opened a new account ({accountName} " +
+                    $"with account number {accountNumber}).");
             }
 
             catch (Exception e)
@@ -70,9 +72,6 @@ namespace MandelsBankenConsole.UserHandler
             int accountNumber = _random.Next(MinAccountNum, MaxAccountNum);
             return accountNumber;
         }
-
-        // validates the account name only characters allowed with 5 - 50 length min/max.
-        public string NameAccount() => _validateUserInput.AccountName();
 
 
         private AccountType AccountTypeChoice()
@@ -95,9 +94,8 @@ namespace MandelsBankenConsole.UserHandler
         }
 
 
-        private int IntCurrencyId()
+        private int IdCurrency()
         {
-
             var currencyId = _validateUserInput.CodeCurrency();
 
             return _bankenContext.Currencies

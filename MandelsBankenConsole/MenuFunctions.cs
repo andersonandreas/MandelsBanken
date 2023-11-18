@@ -14,14 +14,21 @@ namespace MandelsBankenConsole
 
         private readonly BankenContext _bankenContext;
         private readonly AccountManager _accountManager;
+        private readonly DepositMoneyFunctions _depositMoneyFunctions;
 
 
         private static User loggedInUser;
 
-        public MenuFunctions(BankenContext bankenContext, AccountManager accountManager)
+        public MenuFunctions()
+        {
+
+        }
+
+        public MenuFunctions(BankenContext bankenContext, AccountManager accountManager, DepositMoneyFunctions depositMoneyFunctions)
         {
             _bankenContext = bankenContext;
             _accountManager = accountManager;
+            _depositMoneyFunctions = depositMoneyFunctions;
 
         }
 
@@ -148,11 +155,12 @@ namespace MandelsBankenConsole
                     break;
                 case 3:
                     Console.WriteLine("Does fourth option...");
+                    _depositMoneyFunctions.DepositMoney(loggedInUser);
                     Console.ReadLine();
                     break;
                 case 4:
                     Console.WriteLine("Does fifth option...");
-                    _accountManager.RunAccountCreation(loggedInUser);
+                    _accountManager.CreateAccount(loggedInUser);
                     Console.ReadLine();
                     break;
                 case 5:

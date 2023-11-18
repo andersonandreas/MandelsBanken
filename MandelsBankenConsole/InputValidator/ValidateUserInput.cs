@@ -34,7 +34,7 @@
                 return amount;
             }
 
-            // need to fix this.....
+            // i need to fix this.....
             Console.WriteLine("Invalid input for amout...");
             return 0;
         }

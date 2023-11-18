@@ -18,7 +18,9 @@ namespace MandelsBankenConsole.CurrencyConverter
             _apiDataReader = apiDataReader;
         }
 
-        public async Task<(decimal ConvertResult, string Information)> ConvertBetweenCurrencies(string baseCurrency, string targetCurrency, decimal amount)
+
+        public async Task<(decimal ConvertResult, string Information)> ConvertBetweenCurrencies(
+            string baseCurrency, string targetCurrency, decimal amount)
         {
 
             try
@@ -32,7 +34,7 @@ namespace MandelsBankenConsole.CurrencyConverter
             }
             catch (Exception ex)
             {
-                // add more spec error message to console
+                // i need to make this error more specfic
                 Console.WriteLine($"Error: {ex.Message}");
                 throw;
 
@@ -52,23 +54,22 @@ namespace MandelsBankenConsole.CurrencyConverter
                 var information = ConvertInfo(baseCurrency, targetCurrency, amount, ConvertResult);
 
 
-
                 return (ConvertResult, information);
             }
-            catch (Exception ex)
+            catch (JsonException e)
             {
-                // add more spec error message to console
-                Console.WriteLine($"Error: {ex.Message}");
+                Console.WriteLine($"Json error: {e.Message}");
                 throw;
-
             }
 
         }
 
-        private string ConvertInfo(string baseCurrency, string targetCurrency, decimal amount, decimal ConvertResult)
+        private string ConvertInfo(string baseCurrency, string targetCurrency,
+            decimal amount, decimal ConvertResult)
         {
 
-            return $"Convertering from {baseCurrency} to {targetCurrency}: {amount} {baseCurrency} = {ConvertResult} {targetCurrency}";
+            return $"Convertering from {baseCurrency} to {targetCurrency}: " +
+                $"{amount} {baseCurrency} = {ConvertResult} {targetCurrency}";
         }
 
 
@@ -80,6 +81,7 @@ namespace MandelsBankenConsole.CurrencyConverter
 
             return (baseCurrency, targetCurrency, amount);
         }
+
 
         private decimal Result(string json)
         {

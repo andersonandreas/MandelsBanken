@@ -14,19 +14,19 @@ namespace MandelsBankenConsole
                 new CharValidator(),
                 new NumberValidator());
 
-            //CurrencyHandler exchangeHandler = new CurrencyHandler(
-            //    userInputValidator,
-            //    apiDataReader);
-
-            //ExchangeCurrency transaction = new ExchangeCurrency(exchangeHandler);
 
 
+            // istallet for alla rader i era klasser 
+            var exchange = CurrencyInitExchange.InitCurrencyHandler();
 
-
-            // Mine account class. Yours gonna be here so that we can inject them into MenuFunctions class.
+            // allt detta kommer flyttas till en klass dar vi kor voran applicaton och sedan startar vi den klassen har 
+            // i program.
             AccountManager accountManager = new AccountManager(userInputValidator, context, new Random());
 
-            MenuFunctions menuFunctions = new MenuFunctions(context, accountManager);
+            DepositMoneyFunctions depositMoneyFunctions = new DepositMoneyFunctions(exchange);
+            MenuFunctions menuFunctions = new MenuFunctions(context, accountManager, depositMoneyFunctions);
+
+
 
             menuFunctions.LogIn();
 
@@ -34,8 +34,22 @@ namespace MandelsBankenConsole
 
 
 
-
         }
-    }
 
+
+
+
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
