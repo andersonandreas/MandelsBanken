@@ -47,11 +47,19 @@ namespace MandelsBankenConsole.Utilities
             
         }
 
-        public static List<string> GetAccountInformation(List<Account> accounts)
+        public static List<string> GetAccountInformation(List<Account> accounts, bool balance = true)
         {
+            if (balance) { 
             return accounts
-                .Select(a => $"Account number: {a.AccountNumber}\tType: {a.Type}\tBalance: {a.Balance} {a.Currency.CurrencyCode}")
+                .Select(a => $"Account number: {a.AccountNumber} {a.AccountName}\tBalance: {a.Balance} {a.Currency.CurrencyCode}")
                 .ToList();
+            }
+
+            return accounts
+                .Select(a => $"Account number: {a.AccountNumber} {a.AccountName}\tCurrency: {a.Currency.CurrencyCode}")
+                .ToList();
+
+
         }
 
 

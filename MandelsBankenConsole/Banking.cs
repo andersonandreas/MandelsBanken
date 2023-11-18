@@ -16,7 +16,7 @@ namespace MandelsBankenConsole
 {
     internal class Banking
     {
-        public static async void BankTransfer(/*BankenContext context, User user*/)
+        public static async void BankTransfer(/*BankenContext context, */User loggedInUser)
         {
             // user has chosen "Transfer between accounts"
             // we give choice to either transfer between user's own accounts or to another person
@@ -29,10 +29,10 @@ namespace MandelsBankenConsole
 
             var context = new BankenContext();
             //hårdkodad nu, byts till login user
-            User activeUser = context.Users.Where(i => i.Id == 4).Single();
+            //User loggedInUser = context.Users.Where(i => i.Id == 4).Single();
 
 
-            List<Account> userAccounts = DbHelper.GetAllAccounts(context, activeUser);
+            List<Account> userAccounts = DbHelper.GetAllAccounts(context, loggedInUser);
             List<string> userAccountsDesc = DbHelper.GetAccountInformation(userAccounts);
             // if user only has 1 account, this is the default "from-account-nr"=0
             int choiceFrom = 0, choiceTo = 0, choiceToOther = 0;
@@ -65,7 +65,8 @@ namespace MandelsBankenConsole
                 List<User> allUsers = DbHelper.GetAllUsers(context);
                 foreach (User user in allUsers)
                 {
-                    if (user != activeUser)
+                    if (user.Id != loggedInUser.Id)
+                    // efter att vi fångat loggedInUser så kunde jag inte längre jämföra user!=loggedInUser för den första innehöll Accounts och den andra inte och jämflörelsen funkade inte längre. Fundera på det
                     {
                         Console.WriteLine(user.CustomerName);
                         allOtherAccounts.AddRange(DbHelper.GetAllAccounts(context, user));
@@ -104,7 +105,7 @@ namespace MandelsBankenConsole
 
             ExchangeCurrency transaction = new ExchangeCurrency(exchangeHandler);
             // method for converting 
-            var (resultIndecimal, infoDescription) = await transaction.ConvertCurrency(chosenFromAccount.Currency.CurrencyCode, chosenToAccount.Currency.CurrencyCode, amount);
+            var (resultIndecimal, infoDescription) = await transaction.ConvertCurrency(chosenToAccount.Currency.CurrencyCode, chosenFromAccount.Currency.CurrencyCode, amount);
 
             await Console.Out.WriteLineAsync(resultIndecimal.ToString());
             await Console.Out.WriteLineAsync(infoDescription);

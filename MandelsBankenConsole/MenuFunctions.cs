@@ -122,7 +122,7 @@ namespace MandelsBankenConsole
                     break;
                 case 1:
                     Console.WriteLine("Does second option...");
-                    Banking.BankTransfer();
+                    Banking.BankTransfer(loggedInUser);
                     Console.ReadLine();
                     break;
                 case 2:
