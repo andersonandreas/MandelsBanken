@@ -61,18 +61,7 @@ namespace MandelsBankenConsole.Utilities
 
 
         }
-
-
-        public static int ReturnCurrencyIdFromCode(BankenContext context, string currencyCode)
-        {
-            return context.Currencies
-                .Where(c => c.CurrencyCode == currencyCode)
-                .Select(c => c.Id)
-                .Single();
-
-        }
-
-      
+     
 
     }
 }
