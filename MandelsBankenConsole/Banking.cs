@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using MandelsBankenConsole.API;
 using MandelsBankenConsole.CurrencyConverter;
 using MandelsBankenConsole.InputValidator;
+using System.Transactions;
 
 namespace MandelsBankenConsole
 {
@@ -100,36 +101,70 @@ namespace MandelsBankenConsole
             }
             Console.WriteLine($"\nTransfer from {chosenFromAccount.AccountName} ({chosenFromAccount.Currency.CurrencyCode}) to {chosenToAccount.AccountName} ({chosenToAccount.Currency.CurrencyCode})");
             Console.Write($"Enter amount to transfer (in {chosenToAccount.Currency.CurrencyCode}): ");
-            //input behöver valideras!
             int amount = int.Parse(Console.ReadLine());
+            // först validate it is an amount!!
+            // -- has Andreas a function for that?
+            decimal amountFrom=0, amountTo = 0;
+            string transactionInfoFrom, transactionInfoTo;
+
+            // amount in the outgoing's and incoming accounts currencies
+            if (chosenToAccount.Currency.CurrencyCode == chosenFromAccount.Currency.CurrencyCode)
+            {
+                amountFrom = amount;
+                amountTo = amount;
+            }
+            else
+            {
+                // ---------------------------------------------------
+                // ---------------------------------------------------
+                //Console.WriteLine("testar omvandlingen");
+                // ---------------------------------------------------
+                // ---------------------------------------------------
+
+                IAPIDataReaderCurrency apiDataReader = new APIDataReaderCurrency();
+                IValidateUserInput userInputValidator = new ValidateUserInput(
+                    new CharValidator(),
+                    new NumberValidator());
+
+                CurrencyHandler exchangeHandler = new CurrencyHandler(
+                    userInputValidator,
+                    apiDataReader);
+
+                ExchangeCurrency transaction = new ExchangeCurrency(exchangeHandler);
+                // method for converting 
+                var (resultIndecimal, infoDescription) = await transaction.ConvertCurrency(chosenToAccount.Currency.CurrencyCode, chosenFromAccount.Currency.CurrencyCode, amount);
+
+                //await Console.Out.WriteLineAsync(resultIndecimal.ToString());
+                //await Console.Out.WriteLineAsync(infoDescription);
 
 
+                // ---------------------------------------------------
+                // ---------------------------------------------------
 
-            // ---------------------------------------------------
-            // ---------------------------------------------------
-            Console.WriteLine("testar omvandlingen");
-            // ---------------------------------------------------
-            // ---------------------------------------------------
+                amountFrom = Math.Round(resultIndecimal,2);// nice bank, not stealing the roundups
+                amountTo = amount;
+            }
+            
+           
 
-            IAPIDataReaderCurrency apiDataReader = new APIDataReaderCurrency();
-            IValidateUserInput userInputValidator = new ValidateUserInput(
-                new CharValidator(),
-                new NumberValidator());
+            transactionInfoFrom = $"Transfer {amountFrom} {chosenFromAccount.Currency.CurrencyCode} from this account";
+            transactionInfoTo = $"Transfer {amountTo} {chosenToAccount.Currency.CurrencyCode} to this account";
+            //Console.WriteLine(transactionInfoFrom);
+            //Console.WriteLine(transactionInfoTo);
 
-            CurrencyHandler exchangeHandler = new CurrencyHandler(
-                userInputValidator,
-                apiDataReader);
+            bool transactionSucceeded=DbHelper.MakeTransaction(context, chosenFromAccount, -amountFrom, transactionInfoFrom);
+            if (transactionSucceeded) 
+            {
+                if (DbHelper.MakeTransaction(context, chosenToAccount, amountTo, transactionInfoTo))
+                {
+                    Console.WriteLine("Hurray!");
+                    Console.WriteLine($"{DbHelper.GetAccountInformation(new List<Account>() {chosenFromAccount})[0]}");
+                    Console.WriteLine($"{DbHelper.GetAccountInformation(new List<Account>() {chosenToAccount })[0]}");
 
-            ExchangeCurrency transaction = new ExchangeCurrency(exchangeHandler);
-            // method for converting 
-            var (resultIndecimal, infoDescription) = await transaction.ConvertCurrency(chosenToAccount.Currency.CurrencyCode, chosenFromAccount.Currency.CurrencyCode, amount);
+                }
+            }
+                        
 
-            await Console.Out.WriteLineAsync(resultIndecimal.ToString());
-            await Console.Out.WriteLineAsync(infoDescription);
-
-
-            // ---------------------------------------------------
-            // ---------------------------------------------------
 
         }
 
