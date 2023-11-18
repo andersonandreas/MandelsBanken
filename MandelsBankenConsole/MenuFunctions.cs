@@ -59,7 +59,7 @@ namespace MandelsBankenConsole
                     while (true)
                     { 
                         choice = ShowMenu(userMenuOptions);
-                        ExecuteMenuOption(choice);
+                        ExecuteMenuOption(context, choice);
                     }
                 }
             }
@@ -112,17 +112,18 @@ namespace MandelsBankenConsole
             }
         }
 
-        private static bool ExecuteMenuOption(int optionIndex)
+        private static bool ExecuteMenuOption(BankenContext context,int optionIndex)
         {
             switch (optionIndex)
             {
                 case 0:
                     Console.WriteLine("Does first option...");
+                    Banking.ShowAccounts(context,loggedInUser);
                     Console.ReadLine();
                     break;
                 case 1:
                     Console.WriteLine("Does second option...");
-                    Banking.BankTransfer(loggedInUser);
+                    Banking.BankTransfer(context,loggedInUser);
                     Console.ReadLine();
                     break;
                 case 2:

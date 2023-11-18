@@ -16,7 +16,28 @@ namespace MandelsBankenConsole
 {
     internal class Banking
     {
-        public static async void BankTransfer(/*BankenContext context, */User loggedInUser)
+        public static void ShowAccounts(BankenContext context, User loggedInUser)
+        {
+
+            // Show the list with all accounts of the active user
+
+            List<Account> userAccounts = DbHelper.GetAllAccounts(context, loggedInUser);
+            List<string> userAccountsDesc = DbHelper.GetAccountInformation(userAccounts);
+
+            if (userAccounts.Count == 0)
+            {
+                Console.WriteLine("You dont have any accounts yet :(");
+            }
+            
+            Console.WriteLine("Dina konton: ");
+            foreach(string accountDesc in userAccountsDesc) 
+            {
+                Console.WriteLine(accountDesc);
+            }
+            
+        }
+
+        public static async void BankTransfer(BankenContext context, User loggedInUser)
         {
             // user has chosen "Transfer between accounts"
             // we give choice to either transfer between user's own accounts or to another person
@@ -27,11 +48,7 @@ namespace MandelsBankenConsole
             // choose account to transfer to (list of the other accounts + "transfer to another person"
             // questions: validation for another person: do we need personnummer or do we need to know account number?
 
-            var context = new BankenContext();
-            //hårdkodad nu, byts till login user
-            //User loggedInUser = context.Users.Where(i => i.Id == 4).Single();
-
-
+            
             List<Account> userAccounts = DbHelper.GetAllAccounts(context, loggedInUser);
             List<string> userAccountsDesc = DbHelper.GetAccountInformation(userAccounts);
             // if user only has 1 account, this is the default "from-account-nr"=0

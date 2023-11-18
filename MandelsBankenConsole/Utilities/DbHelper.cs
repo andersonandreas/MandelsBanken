@@ -51,12 +51,12 @@ namespace MandelsBankenConsole.Utilities
         {
             if (balance) { 
             return accounts
-                .Select(a => $"Account number: {a.AccountNumber} {a.AccountName}\tBalance: {a.Balance} {a.Currency.CurrencyCode}")
+                .Select(a => $"Account: {a.AccountNumber} {a.AccountName}\tBalance: {a.Balance} {a.Currency.CurrencyCode}")
                 .ToList();
             }
 
             return accounts
-                .Select(a => $"Account number: {a.AccountNumber} {a.AccountName}\tCurrency: {a.Currency.CurrencyCode}")
+                .Select(a => $"Account: {a.AccountNumber} {a.AccountName}\tCurrency: {a.Currency.CurrencyCode}")
                 .ToList();
 
 
