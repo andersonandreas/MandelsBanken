@@ -39,11 +39,19 @@ namespace MandelsBankenConsole.UserHandler
 
         public void StartUpNewUserAccount(User currentUser)
         {
+            var sekCurrency = _bankenContext.Currencies
+                .Where(u => u.CurrencyCode == "SEK")
+                .Select(u => u.Id)
+                .FirstOrDefault();
+
+
+
+
             var number = GenerateAccountNum();
             var name = "Defualt checking account";
             var type = AccountType.Checking;
             var initialDepo = 0m;
-            var currencyId = 125;
+            var currencyId = sekCurrency;
 
             RunAccountCreation(currentUser, number, name, type, initialDepo, currencyId);
         }

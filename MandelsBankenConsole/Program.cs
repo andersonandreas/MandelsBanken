@@ -1,4 +1,5 @@
-﻿using MandelsBankenConsole.Data;
+﻿using MandelsBankenConsole.AccountHandler;
+using MandelsBankenConsole.Data;
 using MandelsBankenConsole.InputValidator;
 using MandelsBankenConsole.UserHandler;
 
@@ -24,7 +25,10 @@ namespace MandelsBankenConsole
 
             var adminFunctions = new AdminFunctions(accountManager, context);
             var depositMoneyFunctions = new DepositMoneyFunctions(exchange);
-            var menuFunctions = new MenuFunctions(context, accountManager, depositMoneyFunctions, adminFunctions);
+            var banking = new BankTransfer(context, exchange);
+            var showAccount = new ShowAccount(context);
+            var withdrawMoneyFunctions = new WithdrawMoneyFunctions(context, exchange);
+            var menuFunctions = new MenuFunctions(context, accountManager, depositMoneyFunctions, adminFunctions, banking, withdrawMoneyFunctions, showAccount);
 
 
 

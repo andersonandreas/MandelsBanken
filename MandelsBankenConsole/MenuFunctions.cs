@@ -1,4 +1,5 @@
-﻿using MandelsBankenConsole.Data;
+﻿using MandelsBankenConsole.AccountHandler;
+using MandelsBankenConsole.Data;
 using MandelsBankenConsole.Models;
 using MandelsBankenConsole.UserHandler;
 using MandelsBankenConsole.Utilities;
@@ -16,17 +17,24 @@ namespace MandelsBankenConsole
         private readonly AccountManager _accountManager;
         private readonly DepositMoneyFunctions _depositMoneyFunctions;
         private readonly AdminFunctions _adminFunctions;
+        private readonly BankTransfer _bankTransfer;
+        private readonly WithdrawMoneyFunctions _withdrawMoneyFunctions;
+        private readonly ShowAccount _showAccount;
 
 
         private static User loggedInUser;
         public MenuFunctions() { }
 
-        public MenuFunctions(BankenContext bankenContext, AccountManager accountManager, DepositMoneyFunctions depositMoneyFunctions, AdminFunctions adminFunctions)
+        public MenuFunctions(BankenContext bankenContext, AccountManager accountManager, DepositMoneyFunctions depositMoneyFunctions,
+            AdminFunctions adminFunctions, BankTransfer banking, WithdrawMoneyFunctions withdrawMoneyFunctions, ShowAccount showAccount)
         {
             _bankenContext = bankenContext;
             _accountManager = accountManager;
             _depositMoneyFunctions = depositMoneyFunctions;
             _adminFunctions = adminFunctions;
+            _bankTransfer = banking;
+            _withdrawMoneyFunctions = withdrawMoneyFunctions;
+            _showAccount = showAccount;
         }
 
         public void LogIn()
@@ -140,14 +148,17 @@ namespace MandelsBankenConsole
             {
                 case 0:
                     Console.WriteLine("Does first option...");
+                    _showAccount.ShowAccounts(loggedInUser);
                     Console.ReadLine();
                     break;
                 case 1:
                     Console.WriteLine("Does second option...");
+                    _bankTransfer.MakeTransfer(loggedInUser);
                     Console.ReadLine();
                     break;
                 case 2:
                     Console.WriteLine("Does third option...");
+                    _withdrawMoneyFunctions.WithdrawMoney(loggedInUser);
                     Console.ReadLine();
                     break;
                 case 3:

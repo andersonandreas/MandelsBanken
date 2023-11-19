@@ -10,6 +10,7 @@ namespace MandelsBankenConsole
 
         private readonly AccountManager _accountManager;
         private readonly BankenContext _bankenContext;
+        private readonly MenuFunctions _menuFunctions = new MenuFunctions();
 
         public AdminFunctions(AccountManager accountManager, BankenContext bankenContext)
         {
@@ -62,8 +63,12 @@ namespace MandelsBankenConsole
             Console.Write("Enter user social number:");
             string socialNumber = Console.ReadLine();
 
+            const int MinNumber = 0;
+            const int MaxNumber = 10000;
+
+
             Random random = new Random();
-            string pin = random.Next(1000, 10000).ToString();
+            string pin = random.Next(MinNumber, MaxNumber).ToString().PadLeft(4, '0');
 
             User newUser = new User()
             {

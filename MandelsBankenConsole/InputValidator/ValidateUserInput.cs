@@ -25,6 +25,7 @@
             ValidateInput("account name", 5, 50, _charValidator);
 
 
+
         public decimal Amount()
         {
             string input = ValidateInput("amount", 1, 11, _numberValidator);

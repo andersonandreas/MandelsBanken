@@ -2,7 +2,7 @@
 using MandelsBankenConsole.CurrencyConverter;
 using MandelsBankenConsole.InputValidator;
 
-namespace MandelsBankenConsole
+namespace MandelsBankenConsole.AccountHandler
 {
     public class CurrencyInitExchange
     {

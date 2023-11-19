@@ -4,7 +4,7 @@ using MandelsBankenConsole.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 
-namespace MandelsBankenConsole
+namespace MandelsBankenConsole.AccountHandler
 {
     public class DepositMoneyFunctions
     {
@@ -42,7 +42,7 @@ namespace MandelsBankenConsole
 
                 //gets amount to deposit
                 Console.WriteLine("How much money would you like to deposit?");
-                decimal depositedMoney = Decimal.Parse(Console.ReadLine());
+                decimal depositedMoney = decimal.Parse(Console.ReadLine());
 
                 //gets currency and checks if it matches a currency in the database
                 Console.WriteLine("What currency is it in? Write its 3 letter currency code");
