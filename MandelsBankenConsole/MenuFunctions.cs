@@ -59,7 +59,7 @@ namespace MandelsBankenConsole
                     while (true)
                     {
                         choice = ShowMenu(userMenuOptions);
-                        ExecuteMenuOption(choice);
+                        ExecuteMenuOption(choice, context);
                     }
                 }
             }
@@ -111,7 +111,7 @@ namespace MandelsBankenConsole
             }
         }
 
-        private static bool ExecuteMenuOption(int optionIndex)
+        private static bool ExecuteMenuOption(int optionIndex, BankenContext context)
         {
             switch (optionIndex)
             {
@@ -124,8 +124,7 @@ namespace MandelsBankenConsole
                     Console.ReadLine();
                     break;
                 case 2:
-                    Console.WriteLine("Does third option...");
-                    Console.ReadLine();
+                    WithdrawMoneyFunctions.WithdrawMoney(loggedInUser, context);
                     break;
                 case 3:
                     Console.WriteLine("Does fourth option...");
