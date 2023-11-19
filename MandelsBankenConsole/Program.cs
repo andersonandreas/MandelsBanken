@@ -1,42 +1,59 @@
-﻿using MandelsBankenConsole.API;
-using MandelsBankenConsole.CurrencyConverter;
+﻿using MandelsBankenConsole.AccountHandler;
+using MandelsBankenConsole.Data;
 using MandelsBankenConsole.InputValidator;
+using MandelsBankenConsole.UserHandler;
 
 namespace MandelsBankenConsole
 {
-    internal class Program
+    public class Program
     {
         static async Task Main(string[] args)
         {
-
-            IAPIDataReaderCurrency apiDataReader = new APIDataReaderCurrency();
+            var context = new BankenContext();
+            //IAPIDataReaderCurrency apiDataReader = new APIDataReaderCurrency();
             IValidateUserInput userInputValidator = new ValidateUserInput(
                 new CharValidator(),
                 new NumberValidator());
 
-            CurrencyHandler exchangeHandler = new CurrencyHandler(
-                userInputValidator,
-                apiDataReader);
-
-            ExchangeCurrency transaction = new ExchangeCurrency(exchangeHandler);
 
 
-            // user log in method 
+            // istallet for alla rader i era klasser 
+            var exchange = CurrencyInitExchange.InitCurrencyHandler();
 
-            MenuFunctions.LogIn();
+            // allt detta kommer flyttas till en klass dar vi har en mehtod som lagger allt detta i en method och so kor vi methoden i program main. 
+            var accountManager = new AccountManager(userInputValidator, context, new Random());
+
+            var adminFunctions = new AdminFunctions(accountManager, context);
+            var depositMoneyFunctions = new DepositMoneyFunctions(exchange);
+            var banking = new BankTransfer(context, exchange);
+            var showAccount = new ShowAccount(context);
+            var withdrawMoneyFunctions = new WithdrawMoneyFunctions(context, exchange);
+            var menuFunctions = new MenuFunctions(context, accountManager, depositMoneyFunctions, adminFunctions, banking, withdrawMoneyFunctions, showAccount);
 
 
-            // method for converting 
-            var (resultIndecimal, infoDescription) = await transaction.ConvertCurrency("usd", "sek", 500000);
 
-            await Console.Out.WriteLineAsync(resultIndecimal.ToString());
-            await Console.Out.WriteLineAsync(infoDescription);
+            menuFunctions.LogIn();
 
 
 
 
 
         }
-    }
 
+
+
+
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
