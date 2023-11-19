@@ -5,9 +5,10 @@
     {
 
         const string BaseUrl = "https://v6.exchangerate-api.com/v6/";
-        const string APIKey = "0fda422e2537ee416d3bc40e";   // account created for our needs
+        const string APIKey = "0fda422e2537ee416d3bc40e";
 
-        public async Task<string> Read(string baseCurrency, string targetCurrency, decimal amount)
+        public async Task<string> Read(string baseCurrency,
+            string targetCurrency, decimal amount)
         {
 
             try

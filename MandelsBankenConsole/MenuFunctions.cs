@@ -1,13 +1,43 @@
-﻿using MandelsBankenConsole.Data;
+﻿using MandelsBankenConsole.AccountHandler;
+using MandelsBankenConsole.Data;
 using MandelsBankenConsole.Models;
+using MandelsBankenConsole.UserHandler;
 using MandelsBankenConsole.Utilities;
 
 namespace MandelsBankenConsole
 {
-    internal static class MenuFunctions
+    public class MenuFunctions
     {
+
+        //changed the class to public it easier otherwise we need to change all the classes to internal in the whole project
+        // removed the static keyword on the methods. its not needed and we cant use the field of loggedInUser and lpass the other method to each others
+        // we need to put all classes that we build here as Depenciys injections
+
+        private readonly BankenContext _bankenContext;
+        private readonly AccountManager _accountManager;
+        private readonly DepositMoneyFunctions _depositMoneyFunctions;
+        private readonly AdminFunctions _adminFunctions;
+        private readonly BankTransfer _bankTransfer;
+        private readonly WithdrawMoneyFunctions _withdrawMoneyFunctions;
+        private readonly ShowAccount _showAccount;
+
+
         private static User loggedInUser;
-        public static void LogIn()
+        public MenuFunctions() { }
+
+        public MenuFunctions(BankenContext bankenContext, AccountManager accountManager, DepositMoneyFunctions depositMoneyFunctions,
+            AdminFunctions adminFunctions, BankTransfer banking, WithdrawMoneyFunctions withdrawMoneyFunctions, ShowAccount showAccount)
+        {
+            _bankenContext = bankenContext;
+            _accountManager = accountManager;
+            _depositMoneyFunctions = depositMoneyFunctions;
+            _adminFunctions = adminFunctions;
+            _bankTransfer = banking;
+            _withdrawMoneyFunctions = withdrawMoneyFunctions;
+            _showAccount = showAccount;
+        }
+
+        public void LogIn()
         {
             Console.WriteLine("Welcome to Mandelsbank!");
             Thread.Sleep(500);
@@ -31,24 +61,24 @@ namespace MandelsBankenConsole
                     Console.WriteLine("Invalid password!");
                     return;
                 }
-                AdminFunctions.DoAdminTasks();
+                _adminFunctions.DoAdminTasks();
                 return;
             }
             else
             {
-                using (BankenContext context = new BankenContext())
-                {
-                    loggedInUser = DbHelper.GetUserByLogInInput(context, userLogInInput);
+                // removed the context here we take the context from the injection so we now the we working with just one connetcion object in the whole project
 
-                    if (loggedInUser == null || loggedInUser.Pin != pin)
-                    {
-                        Console.WriteLine("Invalid username or password!");
-                        return;
-                    }
-                    Console.Clear();
-                    Console.WriteLine($"Welcome {loggedInUser.CustomerName}!");
-                    Thread.Sleep(750);
-                    string[] userMenuOptions = {
+                loggedInUser = DbHelper.GetUserByLogInInput(_bankenContext, userLogInInput);
+
+                if (loggedInUser == null || loggedInUser.Pin != pin)
+                {
+                    Console.WriteLine("Invalid username or password!");
+                    return;
+                }
+                Console.Clear();
+                Console.WriteLine($"Welcome {loggedInUser.CustomerName}!");
+                Thread.Sleep(750);
+                string[] userMenuOptions = {
                         "See your accounts and balance",
                         "Transfer between accounts",
                         "Withdraw money",
@@ -56,16 +86,15 @@ namespace MandelsBankenConsole
                         "Open a new account",
                         "Log out"
                         };
-                    while (true)
-                    { 
-                        choice = ShowMenu(userMenuOptions);
-                        ExecuteMenuOption(context, choice);
-                    }
+                while (true)
+                {
+                    choice = ShowMenu(userMenuOptions);
+                    ExecuteMenuOption(choice);
                 }
+
             }
         }
-       
-        public static int ShowMenu(string[] menuOptions, string title="Menu")
+        public int ShowMenu(string[] menuOptions, string title = "Menu")
         {
             // Magda.ideer:
             // -- vi ska ha en inramning
@@ -112,30 +141,34 @@ namespace MandelsBankenConsole
             }
         }
 
-        private static bool ExecuteMenuOption(BankenContext context,int optionIndex)
+
+        private bool ExecuteMenuOption(int optionIndex)
         {
             switch (optionIndex)
             {
                 case 0:
                     Console.WriteLine("Does first option...");
-                    Banking.ShowAccounts(context,loggedInUser);
+                    _showAccount.ShowAccounts(loggedInUser);
                     Console.ReadLine();
                     break;
                 case 1:
                     Console.WriteLine("Does second option...");
-                    Banking.BankTransfer(context,loggedInUser);
+                    _bankTransfer.MakeTransfer(loggedInUser);
                     Console.ReadLine();
                     break;
                 case 2:
                     Console.WriteLine("Does third option...");
+                    _withdrawMoneyFunctions.WithdrawMoney(loggedInUser);
                     Console.ReadLine();
                     break;
                 case 3:
                     Console.WriteLine("Does fourth option...");
+                    _depositMoneyFunctions.DepositMoney(loggedInUser);
                     Console.ReadLine();
                     break;
                 case 4:
                     Console.WriteLine("Does fifth option...");
+                    _accountManager.CreateAccount(loggedInUser);
                     Console.ReadLine();
                     break;
                 case 5:

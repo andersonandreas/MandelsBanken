@@ -5,5 +5,8 @@
         string BaseCurrency();
         string TargetCurrency();
         decimal Amount();
+        string AccountName();
+        string CodeCurrency();
+
     }
 }

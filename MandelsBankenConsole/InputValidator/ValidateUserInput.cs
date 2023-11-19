@@ -18,19 +18,30 @@
         public string TargetCurrency() =>
             ValidateInput("target currency", 3, 4, _charValidator);
 
+        public string CodeCurrency() =>
+    ValidateInput("currency for account", 3, 4, _charValidator);
+
+        public string AccountName() =>
+            ValidateInput("account name", 5, 50, _charValidator);
+
+
+
         public decimal Amount()
         {
-            string input = ValidateInput("amount", 1, 20, _numberValidator);
+            string input = ValidateInput("amount", 1, 11, _numberValidator);
 
             if (decimal.TryParse(input, out decimal amount))
             {
                 return amount;
             }
 
-            // need to fix this.....
+            // i need to fix this.....
             Console.WriteLine("Invalid input for amout...");
             return 0;
         }
+
+
+
 
 
         // this method takes a message to show the user and a min/max length range valid for the input,
