@@ -1,5 +1,6 @@
 ﻿using MandelsBankenConsole.Data;
 using MandelsBankenConsole.Models;
+using MandelsBankenConsole.Utilities;
 using System.Runtime.InteropServices;
 
 namespace MandelsBankenConsole
@@ -11,47 +12,16 @@ namespace MandelsBankenConsole
         public static void WithdrawMoney(User loggedInUser, BankenContext context)
         {
             int selectedIndex = 0;
-            bool exit = false;
-
-            while (!exit)
+            List<Account> userAccounts = DbHelper.GetAllAccounts(context, loggedInUser);
+            List<string> userAccountsDesc = DbHelper.GetAccountInformation(userAccounts);
+            // if user only has 1 account, this is the default withdrawal account = 0 in the list
+            // if more than 1 account, choose from the list
+            if (userAccounts.Count > 1)
             {
-                Console.Clear();
-                Console.WriteLine("Choose an account for withdrawal:");
-
-                var availableAccounts = context.Users
-                    .Where(u => u.Id == loggedInUser.Id)
-                    .SelectMany(u => u.Accounts)
-                    .Where(a => a.UserId == loggedInUser.Id)
-                    .Select(a => new { a.AccountNumber, a.Balance, a.AccountName })
-                    .ToArray();
-
-                for (int i = 0; i < availableAccounts.Length; i++)
-                {
-                    if (i == selectedIndex)
-                    {
-                        Console.Write("->");
-                    }
-                    else
-                    {
-                        Console.Write(" ");
-                    }
-                    Console.WriteLine($"{availableAccounts[i].AccountNumber}, {availableAccounts[i].AccountName}: {availableAccounts[i].Balance}");
-                }
-                ConsoleKeyInfo keyInfo = Console.ReadKey();
-                switch (keyInfo.Key)
-                {
-                    case ConsoleKey.UpArrow:
-                        selectedIndex = (selectedIndex - 1 + availableAccounts.Length) % availableAccounts.Length;
-                        break;
-                    case ConsoleKey.DownArrow:
-                        selectedIndex = (selectedIndex + 1) % availableAccounts.Length;
-                        break;
-                    case ConsoleKey.Enter:
-                        int selectedAccountNumber = availableAccounts[selectedIndex].AccountNumber;
-                        MakeMoneyWithdrawal(loggedInUser, context, selectedAccountNumber);
-                        break;
-                }
+                selectedIndex = MenuFunctions.ShowMenu(userAccountsDesc.ToArray(), "Choose an account for withdrawal:");
             }
+            int selectedAccountNumber = userAccounts[selectedIndex].AccountNumber;
+            MakeMoneyWithdrawal(loggedInUser, context, selectedAccountNumber);
         }
         //Use API converter to convert transactions from savings with foreign currency...
         //Show accounts with foreign currency, converted to SEK??
@@ -65,7 +35,7 @@ namespace MandelsBankenConsole
             int userInput;
             decimal availableBalance = FetchBalance(context, loggedInUser.Id, selectedAccountNumber);
 
-            while (true)
+            while (true) //fixA?
             {
                 string stringUserInput = Console.ReadLine();
                 if (int.TryParse(stringUserInput, out userInput))
@@ -115,9 +85,9 @@ namespace MandelsBankenConsole
                 UpdateAccountBalance(context, loggedInUser.Id, selectedAccountNumber, userInput);
                 Console.WriteLine($"The withdrawal has been executed. New balance is: {(double)FetchBalance(context, loggedInUser.Id, selectedAccountNumber)} SEK.");
                 Thread.Sleep(8000);
-                return;
+                return; //Blir fel här, måste tillbaka till main...
             }
-
+            return;
 
         }
 
@@ -130,7 +100,7 @@ namespace MandelsBankenConsole
         private static void UpdateAccountBalance(BankenContext context, int loggedInUser, int selectedAccountNumber, int withdrawalAmount)
         {
             var newAccountBalance = context.Accounts
-            .Where(a => a.UserId == loggedInUser && a.AccountNumber == selectedAccountNumber)
+            .Where(a => /*a.UserId == loggedInUser &&*/ a.AccountNumber == selectedAccountNumber)
             .FirstOrDefault();
             if (newAccountBalance != null )
             {
@@ -146,7 +116,7 @@ namespace MandelsBankenConsole
         private static decimal FetchBalance(BankenContext context, int loggedInUser, int selectedAccountNumber)
         {
             var currentAccountBalance = context.Accounts
-            .Where(u => u.UserId == loggedInUser && u.AccountNumber == selectedAccountNumber)
+            .Where(u => /*u.UserId == loggedInUser &&*/ u.AccountNumber == selectedAccountNumber)
             .Select(u => u.Balance)
             .FirstOrDefault();
             return currentAccountBalance;
