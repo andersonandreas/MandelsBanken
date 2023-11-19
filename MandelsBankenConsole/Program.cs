@@ -19,12 +19,12 @@ namespace MandelsBankenConsole
             // istallet for alla rader i era klasser 
             var exchange = CurrencyInitExchange.InitCurrencyHandler();
 
-            // allt detta kommer flyttas till en klass dar vi kor voran applicaton och sedan startar vi den klassen har 
-            // i program.
-            AccountManager accountManager = new AccountManager(userInputValidator, context, new Random());
+            // allt detta kommer flyttas till en klass dar vi har en mehtod som lagger allt detta i en method och so kor vi methoden i program main. 
+            var accountManager = new AccountManager(userInputValidator, context, new Random());
 
-            DepositMoneyFunctions depositMoneyFunctions = new DepositMoneyFunctions(exchange);
-            MenuFunctions menuFunctions = new MenuFunctions(context, accountManager, depositMoneyFunctions);
+            var adminFunctions = new AdminFunctions(accountManager, context);
+            var depositMoneyFunctions = new DepositMoneyFunctions(exchange);
+            var menuFunctions = new MenuFunctions(context, accountManager, depositMoneyFunctions, adminFunctions);
 
 
 

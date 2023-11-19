@@ -14,6 +14,7 @@ namespace MandelsBankenConsole.UserHandler
         const int MinAccountNum = 10000000;
         const int MaxAccountNum = 100000000;
 
+        public AccountManager() { }
 
         public AccountManager(IValidateUserInput validateUserInput,
             BankenContext bankenContext, Random random)
@@ -31,6 +32,18 @@ namespace MandelsBankenConsole.UserHandler
             var type = AccountTypeChoice();
             var initialDepo = _validateUserInput.Amount();
             var currencyId = IdCurrency();
+
+            RunAccountCreation(currentUser, number, name, type, initialDepo, currencyId);
+        }
+
+
+        public void StartUpNewUserAccount(User currentUser)
+        {
+            var number = GenerateAccountNum();
+            var name = "Defualt checking account";
+            var type = AccountType.Checking;
+            var initialDepo = 0m;
+            var currencyId = 125;
 
             RunAccountCreation(currentUser, number, name, type, initialDepo, currencyId);
         }

@@ -15,21 +15,18 @@ namespace MandelsBankenConsole
         private readonly BankenContext _bankenContext;
         private readonly AccountManager _accountManager;
         private readonly DepositMoneyFunctions _depositMoneyFunctions;
+        private readonly AdminFunctions _adminFunctions;
 
 
         private static User loggedInUser;
+        public MenuFunctions() { }
 
-        public MenuFunctions()
-        {
-
-        }
-
-        public MenuFunctions(BankenContext bankenContext, AccountManager accountManager, DepositMoneyFunctions depositMoneyFunctions)
+        public MenuFunctions(BankenContext bankenContext, AccountManager accountManager, DepositMoneyFunctions depositMoneyFunctions, AdminFunctions adminFunctions)
         {
             _bankenContext = bankenContext;
             _accountManager = accountManager;
             _depositMoneyFunctions = depositMoneyFunctions;
-
+            _adminFunctions = adminFunctions;
         }
 
         public void LogIn()
@@ -56,7 +53,7 @@ namespace MandelsBankenConsole
                     Console.WriteLine("Invalid password!");
                     return;
                 }
-                AdminFunctions.DoAdminTasks();
+                _adminFunctions.DoAdminTasks();
                 return;
             }
             else
