@@ -37,23 +37,33 @@ namespace MandelsBankenConsole.AccountHandler
             {
                 selectedIndex = _menuFunctions.ShowMenu(userAccountsDesc.ToArray(), "Choose an account for withdrawal:");
             }
-            int selectedAccountNumber = userAccounts[selectedIndex].AccountNumber;
-            MakeMoneyWithdrawal(loggedInUser, selectedAccountNumber);
+            Account selectedAccount = userAccounts[selectedIndex];
+            MakeMoneyWithdrawal(loggedInUser, selectedAccount);
 
         }
         //Use API converter to convert transactions from savings with foreign currency...
         //Show accounts with foreign currency, converted to SEK??
         //This method will ask for valid withdrawal amount + pin
         //Loop will check for valid input
-        private void MakeMoneyWithdrawal(User loggedInUser, int selectedAccountNumber)
+        private async void MakeMoneyWithdrawal(User loggedInUser, Account account)
         {
+            //if (selectedAccountNumber.Currency.CurrencyCode  == "SEK") { }
 
             Console.Clear();
             Console.WriteLine("Please, enter withdrawal amount in SEK. If you want to exit withdrawal menu, press 1.");
             int userInput;
-            decimal availableBalance = FetchBalance(loggedInUser.Id, selectedAccountNumber);
+            decimal availableBalance = account.Balance;
+            decimal amount;
+            string accountCurrencyCode = account.Currency.CurrencyCode;
 
-            while (true) //fixA?
+            if (availableBalance == 0)
+            {
+                Console.Clear();
+                Console.WriteLine("You do not have any money in the account. You will return to main menu.");
+                return;
+            }
+
+            while (true)
             {
                 string stringUserInput = Console.ReadLine();
                 if (int.TryParse(stringUserInput, out userInput))
@@ -63,16 +73,17 @@ namespace MandelsBankenConsole.AccountHandler
                         if (userInput == 1)
                         {
                             Console.WriteLine("Returning to menu.");
-                            Thread.Sleep(3000);
                             return;
                         }
-                        else if (userInput > availableBalance)
-                        {
-                            Console.Clear();
-                            Console.WriteLine("Invalid amount or insufficient balance. Try again.");
-                        }
+                        //else if (userInput > availableBalance)
+                        //{
+                        //    Console.Clear();
+                        //    Console.WriteLine("Invalid amount or insufficient balance. Try again.");
+                        //}
                         else
                         {
+                            var (resultIndecimal, infoDescription) = await _conversion.ConvertCurrency(accountCurrencyCode, "SEK", userInput);
+                            amount = resultIndecimal;
                             Console.WriteLine("Loading... Did you know that almonds are related to peaches?");
                             break;
                         }
@@ -80,7 +91,6 @@ namespace MandelsBankenConsole.AccountHandler
                     else
                     {
                         Console.WriteLine("Invalid input. Please, enter a positive number.");
-                        Thread.Sleep(3000);
                     }
 
                 }
@@ -91,7 +101,7 @@ namespace MandelsBankenConsole.AccountHandler
 
             }
             //Going into this selection, to see if transaction will or will not be made.
-            if (!VerifyPin(loggedInUser.Id, selectedAccountNumber))
+            if (!VerifyPin(loggedInUser.Id))
             {
                 Console.WriteLine("Pin attempts exhausted. Returning to main manu.");
                 Thread.Sleep(3000);
@@ -100,12 +110,17 @@ namespace MandelsBankenConsole.AccountHandler
             else
             {
                 Console.Clear();
-                UpdateAccountBalance(loggedInUser.Id, selectedAccountNumber, userInput);
-                Console.WriteLine($"The withdrawal has been executed. New balance is: {(double)FetchBalance(loggedInUser.Id, selectedAccountNumber)} SEK.");
-                Thread.Sleep(8000);
-                return; //Blir fel här, måste tillbaka till main...
+                if (DbHelper.MakeTransaction(_bankenContext, account, -amount, "withdrawal"))
+                {
+                    //UpdateAccountBalance(loggedInUser.Id, selectedAccountNumber, userInput);
+                    await Console.Out.WriteLineAsync($"The withdrawal has been executed. New balance is: {account.Balance} {accountCurrencyCode}");
+                    Thread.Sleep(3000);
+                    Console.ReadKey();
+                }
+
+
             }
-            return;
+
 
         }
 
@@ -142,8 +157,12 @@ namespace MandelsBankenConsole.AccountHandler
 
         //Method for verifying pin. If bool returns true, transaction will be made.
         //If user fails three times, they will return to main menu.
-        private bool VerifyPin(int loggedInUserId, int selectedAccountNumber)
+        private bool VerifyPin(int loggedInUserId)
         {
+            string usersPin = _bankenContext.Users
+            .Where(u => u.Id == loggedInUserId)
+            .Select(u => u.Pin)
+            .FirstOrDefault();
             int pinAttempts = 0;
 
             while (pinAttempts < 3)
@@ -152,11 +171,9 @@ namespace MandelsBankenConsole.AccountHandler
                 Console.WriteLine("Please, verify your withdrawal with pin.");
                 string pin = Console.ReadLine();
 
-                var loggedInUser = _bankenContext.Users
-                    .Where(u => u.Id == loggedInUserId)
-                    .FirstOrDefault();
 
-                if (loggedInUser != null && loggedInUser.Pin == pin)
+                Console.WriteLine();
+                if (usersPin == pin)
                 {
                     return true;
                 }
