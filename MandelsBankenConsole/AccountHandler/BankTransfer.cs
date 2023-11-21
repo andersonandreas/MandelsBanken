@@ -1,5 +1,6 @@
 ﻿using MandelsBankenConsole.CurrencyConverter;
 using MandelsBankenConsole.Data;
+using MandelsBankenConsole.InputValidator;
 using MandelsBankenConsole.Models;
 using MandelsBankenConsole.Utilities;
 
@@ -10,13 +11,15 @@ namespace MandelsBankenConsole.AccountHandler
 
         private readonly BankenContext _bankenContext;
         private readonly ExchangeCurrency _conversion;
+        private readonly IValidateUserInput _validateUserInput;
         private readonly MenuFunctions _menuFunctions = new MenuFunctions();
 
 
-        public BankTransfer(BankenContext bankenContext, ExchangeCurrency conversion)
+        public BankTransfer(BankenContext bankenContext, ExchangeCurrency conversion, IValidateUserInput validateUserInput)
         {
             _bankenContext = bankenContext;
             _conversion = conversion;
+            _validateUserInput = validateUserInput;
         }
 
 
@@ -29,7 +32,7 @@ namespace MandelsBankenConsole.AccountHandler
             // Transaction is always made in currency of the receiving account
 
             List<Account> userAccounts = DbHelper.GetAllAccounts(_bankenContext, loggedInUser);
-            List<string>  userAccountsDescription = DbHelper.GetAccountInformation(userAccounts);
+            List<string> userAccountsDescription = DbHelper.GetAccountInformation(userAccounts);
             int choiceFrom = 0, choiceTo = 0, choiceToOther = 0;
 
 
@@ -41,7 +44,7 @@ namespace MandelsBankenConsole.AccountHandler
 
             if (userAccounts.Count == 0)
             {
-                Console.WriteLine("You don't have any accounts yet :(");
+                ConsoleHelper.PrintColorRed("You don't have any accounts yet :(");
             }
             else if (userAccounts.Count > 1)
             {
@@ -71,13 +74,12 @@ namespace MandelsBankenConsole.AccountHandler
                 foreach (User user in allUsers)
                 {
                     if (user.Id != loggedInUser.Id)
-                    // efter att vi fångat loggedInUser så kunde jag inte längre jämföra user!=loggedInUser för den första innehöll Accounts och den andra inte och jämflörelsen funkade inte längre. Fundera på det
                     {
                         Console.WriteLine(user.CustomerName);
                         allOtherAccounts.AddRange(DbHelper.GetAllAccounts(_bankenContext, user));
                     }
                 }
-                List<string> allOtherAccountsDesc = DbHelper.GetAccountInformation(allOtherAccounts,false);
+                List<string> allOtherAccountsDesc = DbHelper.GetAccountInformation(allOtherAccounts, false);
                 choiceToOther = _menuFunctions.ShowMenu(allOtherAccountsDesc, $"Transfer from account {chosenFromAccount.AccountNumber} {chosenFromAccount.AccountName} to?");
                 chosenToAccount = allOtherAccounts[choiceToOther];
             }
@@ -93,9 +95,7 @@ namespace MandelsBankenConsole.AccountHandler
 
             Console.WriteLine($"Transfer from {chosenFromAccount.AccountNumber} - {chosenFromAccount.AccountName} ({chosenFromAccount.Currency.CurrencyCode}) to {chosenToAccount.AccountNumber} - {chosenToAccount.AccountName} ({chosenToAccount.Currency.CurrencyCode})");
             Console.Write($"Enter amount to transfer (in {chosenToAccount.Currency.CurrencyCode}): ");
-            int amount = int.Parse(Console.ReadLine());
-            // först validate it is an amount!!
-            // -- has Andreas a function for that?
+            decimal amount = _validateUserInput.Amount();
             decimal amountFrom = 0, amountTo = 0;
             string transactionInfoFrom, transactionInfoTo;
 
@@ -108,11 +108,12 @@ namespace MandelsBankenConsole.AccountHandler
             else
             {
                 // method for currency exchange
-                var (resultIndecimal, infoDescription) = await _conversion.ConvertCurrency(chosenToAccount.Currency.CurrencyCode, chosenFromAccount.Currency.CurrencyCode, amount);
+                var conversionResult = Task.Run(() => _conversion.ConvertCurrency(chosenToAccount.Currency.CurrencyCode, chosenFromAccount.Currency.CurrencyCode, amount)).Result;
+                var (resultIndecimal, infoDescription) = conversionResult;
+
                 amountFrom = Math.Round(resultIndecimal, 2);// nice bank, not stealing the roundups
                 amountTo = amount;
             }
-
 
             // Make transaction
 
@@ -128,19 +129,12 @@ namespace MandelsBankenConsole.AccountHandler
             {
                 if (DbHelper.MakeTransaction(_bankenContext, chosenToAccount, amountTo, transactionInfoTo))
                 {
-                    Console.WriteLine("Bank transfer successful!");
-                    Console.WriteLine($"{DbHelper.GetAccountInformation(new List<Account>() { chosenFromAccount })[0]}");
-                    Console.WriteLine($"{DbHelper.GetAccountInformation(new List<Account>() { chosenToAccount })[0]}");
-
+                    ConsoleHelper.PrintColorGreen("Bank transfer successful!");
+                    ConsoleHelper.PrintColorGreen($"{DbHelper.GetAccountInformation(new List<Account>() { chosenFromAccount })[0]}");
+                    ConsoleHelper.PrintColorGreen($"{DbHelper.GetAccountInformation(new List<Account>() { chosenToAccount })[0]}");
                 }
-                
             }
-
-
-
         }
-
-
     }
 }
 

@@ -27,12 +27,12 @@ namespace MandelsBankenConsole.AccountHandler
         {
             int selectedIndex = 0;
             List<Account> userAccounts = DbHelper.GetAllAccounts(_bankenContext, loggedInUser);
-            List<string> userAccountsDesc = DbHelper.GetAccountInformation(userAccounts);
+            List<string> userAccountsDescription = DbHelper.GetAccountInformation(userAccounts);
             // if user only has 1 account, this is the default withdrawal account = 0 in the list
             // if more than 1 account, choose from the list
             if (userAccounts.Count > 1)
             {
-                selectedIndex = _menuFunctions.ShowMenu(userAccountsDesc.ToArray(), "Choose an account for withdrawal:");
+                selectedIndex = _menuFunctions.ShowMenu(userAccountsDescription, "Choose an account for withdrawal:");
             }
             Account selectedAccount = userAccounts[selectedIndex];
             MakeMoneyWithdrawal(loggedInUser, selectedAccount);
@@ -52,7 +52,7 @@ namespace MandelsBankenConsole.AccountHandler
             if (availableBalance == 0)
             {
                 Console.Clear();
-                Console.WriteLine("You do not have any money in the account. You will return to main menu.");
+                ConsoleHelper.PrintColorRed("You do not have any money in the account. You will return to main menu.");
                 return;
             }
             while (true)
@@ -80,18 +80,18 @@ namespace MandelsBankenConsole.AccountHandler
                     }
                     else
                     {
-                        Console.WriteLine("Invalid input. Please, enter a positive number.");
+                        ConsoleHelper.PrintColorRed("Invalid input. Please, enter a positive number.");
                     }
                 }
                 else
                 {
-                    Console.WriteLine("Invalid input. Please, enter a valid number.");
+                    ConsoleHelper.PrintColorRed("Invalid input. Please, enter a valid number.");
                 }
             }
             //Going into this selection, to see if transaction will or will not be made.
             if (!VerifyPin(loggedInUser.Id))
             {
-                Console.WriteLine("Pin attempts exhausted. Press enter to return to main manu.");
+                ConsoleHelper.PrintColorRed("Pin attempts exhausted. Press enter to return to main manu.");
                 return;
             }
             else
