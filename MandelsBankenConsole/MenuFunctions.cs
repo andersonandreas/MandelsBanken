@@ -78,7 +78,7 @@ namespace MandelsBankenConsole
                 Console.Clear();
                 Console.WriteLine($"Welcome {loggedInUser.CustomerName}!");
                 Thread.Sleep(750);
-                string[] userMenuOptions = {
+                List<string> userMenuOptions = new List<string> {
                         "See your accounts and balance",
                         "Transfer between accounts",
                         "Withdraw money",
@@ -94,22 +94,17 @@ namespace MandelsBankenConsole
 
             }
         }
-        public int ShowMenu(string[] menuOptions, string title = "Menu")
+        public int ShowMenu(List<string> menuOptions, string title = "Menu")
         {
-            // Magda.ideer:
-            // -- vi ska ha en inramning
-            // högst upp ska det alltid stå Mandelsbanken + motto
-            // längst ner ska det alltid stå "press Q to log out" or sth
-
 
             int selectedIndex = 0;
-
+            
             while (true)
             {
                 Console.Clear();
                 Console.WriteLine(title);
 
-                for (int i = 0; i < menuOptions.Length; i++)
+                for (int i = 0; i < menuOptions.Count; i++)
                 {
                     if (i == selectedIndex)
                     {
@@ -128,10 +123,10 @@ namespace MandelsBankenConsole
                 switch (keyInfo.Key)
                 {
                     case ConsoleKey.UpArrow:
-                        selectedIndex = (selectedIndex - 1 + menuOptions.Length) % menuOptions.Length;
+                        selectedIndex = (selectedIndex - 1 + menuOptions.Count) % menuOptions.Count;
                         break;
                     case ConsoleKey.DownArrow:
-                        selectedIndex = (selectedIndex + 1) % menuOptions.Length;
+                        selectedIndex = (selectedIndex + 1) % menuOptions.Count;
                         break;
                     case ConsoleKey.Enter:
                         Console.Clear();
@@ -147,27 +142,22 @@ namespace MandelsBankenConsole
             switch (optionIndex)
             {
                 case 0:
-                    Console.WriteLine("Does first option...");
                     _showAccount.ShowAccounts(loggedInUser);
                     Console.ReadLine();
                     break;
                 case 1:
-                    Console.WriteLine("Does second option...");
                     _bankTransfer.MakeTransfer(loggedInUser);
                     Console.ReadLine();
                     break;
                 case 2:
-                    Console.WriteLine("Does third option...");
                     _withdrawMoneyFunctions.WithdrawMoney(loggedInUser);
                     Console.ReadLine();
                     break;
                 case 3:
-                    Console.WriteLine("Does fourth option...");
                     _depositMoneyFunctions.DepositMoney(loggedInUser);
                     Console.ReadLine();
                     break;
                 case 4:
-                    Console.WriteLine("Does fifth option...");
                     _accountManager.CreateAccount(loggedInUser);
                     Console.ReadLine();
                     break;
