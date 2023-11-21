@@ -24,7 +24,7 @@ namespace MandelsBankenConsole
             var accountManager = new AccountManager(userInputValidator, context, new Random());
 
             var adminFunctions = new AdminFunctions(accountManager, context);
-            var depositMoneyFunctions = new DepositMoneyFunctions(exchange);
+            var depositMoneyFunctions = new DepositMoneyFunctions(context, exchange);
             var banking = new BankTransfer(context, exchange);
             var showAccount = new ShowAccount(context);
             var withdrawMoneyFunctions = new WithdrawMoneyFunctions(context, exchange);
