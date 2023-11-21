@@ -23,7 +23,6 @@ namespace MandelsBankenConsole
                 await Console.Out.WriteLineAsync("The appliaction closing..");
             }
 
-
         }
 
 

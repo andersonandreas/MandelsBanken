@@ -18,20 +18,22 @@ namespace MandelsBankenConsole.AccountHandler
         public void ShowAccounts(User loggedInUser)
         {
 
-            // Show the list with all accounts of the active user
+            // User has chosen "See your accounts and balance"
+            // Method shows a list of all accounts of the active user
 
             List<Account> userAccounts = DbHelper.GetAllAccounts(_bankenContext, loggedInUser);
-            List<string> userAccountsDesc = DbHelper.GetAccountInformation(userAccounts);
+            List<string> userAccountsDescription = DbHelper.GetAccountInformation(userAccounts);
 
             if (userAccounts.Count == 0)
             {
-                Console.WriteLine("You dont have any accounts yet :(");
+                Console.WriteLine("You don't have any accounts yet :(");
+                return;
             }
 
             Console.WriteLine("Dina konton: ");
-            foreach (string accountDesc in userAccountsDesc)
+            foreach (string accountDesc in userAccountsDescription)
             {
-                Console.WriteLine(accountDesc);
+                Console.WriteLine($"\t{accountDesc}");
             }
 
         }

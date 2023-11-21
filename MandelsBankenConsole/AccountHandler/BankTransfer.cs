@@ -21,49 +21,51 @@ namespace MandelsBankenConsole.AccountHandler
 
 
 
-
-
         public async void MakeTransfer(User loggedInUser)
         {
-            // user has chosen "Transfer between accounts"
-            // we give choice to either transfer between user's own accounts or to another person
+            // "Transfer between accounts" has been chosen
 
-            // Magda. idea
-            // first: menu/list of accounts to transfer FROM (all of the user's accounts if more than one)
-            // title "transfer from account NUMBER + NAME.." (either the chosen one or user's only one)
-            // choose account to transfer to (list of the other accounts + "transfer to another person"
-            // questions: validation for another person: do we need personnummer or do we need to know account number?
-
+            // User gets a choice to either transfer between user's own accounts or to another person
+            // Transaction is always made in currency of the receiving account
 
             List<Account> userAccounts = DbHelper.GetAllAccounts(_bankenContext, loggedInUser);
-            List<string> userAccountsDesc = DbHelper.GetAccountInformation(userAccounts);
-            // if user only has 1 account, this is the default "from-account-nr"=0
+            List<string>  userAccountsDescription = DbHelper.GetAccountInformation(userAccounts);
             int choiceFrom = 0, choiceTo = 0, choiceToOther = 0;
 
+
+            // Choose the account to make transfer from
+
             // if no accounts, go back to menu
+            // if more than one account, let user choose from the list
+            // if one account, choose automatically this one
+
             if (userAccounts.Count == 0)
             {
-                Console.WriteLine("You dont have any accounts yet :(");
+                Console.WriteLine("You don't have any accounts yet :(");
             }
-            // if more than 1 account, choose from the list
             else if (userAccounts.Count > 1)
             {
-                choiceFrom = _menuFunctions.ShowMenu(userAccountsDesc.ToArray(), "Which account do you want to transfer from?");
+                choiceFrom = _menuFunctions.ShowMenu(userAccountsDescription, "Which account do you want to transfer from?");
             }
-
             // if user only has 1 account, this is the default "from-account"=0, otherwise the chosen one
             Account chosenFromAccount = userAccounts[choiceFrom];
 
-            // list of other accounts to transfer TO + option to transfer to another person
-            userAccountsDesc.RemoveAt(choiceFrom);
+
+            // Choose the account to make transfer to
+
+            // list of user's other accounts (apart from the one to make transfer from)
+            // option to transfer to another person (then choose from a list of all other users' accounts)
+
+            userAccountsDescription.RemoveAt(choiceFrom);
             userAccounts.RemoveAt(choiceFrom);
-            userAccountsDesc.Add("Transfer to another person");
-            choiceTo = _menuFunctions.ShowMenu(userAccountsDesc.ToArray(), $"Transfer from account {chosenFromAccount.AccountNumber} {chosenFromAccount.AccountName} to?");
+            userAccountsDescription.Add("Transfer to another person");
+            choiceTo = _menuFunctions.
+                ShowMenu(userAccountsDescription, $"Transfer from account {chosenFromAccount.AccountNumber} - {chosenFromAccount.AccountName} to?");
             Account chosenToAccount = new Account();
 
             // if transfer to another person (last option on the list), get a list of all other users' accounts
             List<Account> allOtherAccounts = new List<Account>();
-            if (choiceTo == userAccountsDesc.Count - 1)
+            if (choiceTo == userAccountsDescription.Count - 1)
             {
                 List<User> allUsers = DbHelper.GetAllUsers(_bankenContext);
                 foreach (User user in allUsers)
@@ -75,16 +77,21 @@ namespace MandelsBankenConsole.AccountHandler
                         allOtherAccounts.AddRange(DbHelper.GetAllAccounts(_bankenContext, user));
                     }
                 }
-                List<string> allOtherAccountsDesc = DbHelper.GetAccountInformation(allOtherAccounts);
-                choiceToOther = _menuFunctions.ShowMenu(allOtherAccountsDesc.ToArray(), $"Transfer from account {chosenFromAccount.AccountNumber} {chosenFromAccount.AccountName} to?");
+                List<string> allOtherAccountsDesc = DbHelper.GetAccountInformation(allOtherAccounts,false);
+                choiceToOther = _menuFunctions.ShowMenu(allOtherAccountsDesc, $"Transfer from account {chosenFromAccount.AccountNumber} {chosenFromAccount.AccountName} to?");
                 chosenToAccount = allOtherAccounts[choiceToOther];
             }
-            // otherwise assign own to-account but remember we removed one index from the list
+            // otherwise assign own to-account
             else
             {
                 chosenToAccount = userAccounts[choiceTo];
             }
-            Console.WriteLine($"\nTransfer from {chosenFromAccount.AccountName} ({chosenFromAccount.Currency.CurrencyCode}) to {chosenToAccount.AccountName} ({chosenToAccount.Currency.CurrencyCode})");
+
+
+            // Choose the amount for transfer (using receiving account's currency)
+
+
+            Console.WriteLine($"Transfer from {chosenFromAccount.AccountNumber} - {chosenFromAccount.AccountName} ({chosenFromAccount.Currency.CurrencyCode}) to {chosenToAccount.AccountNumber} - {chosenToAccount.AccountName} ({chosenToAccount.Currency.CurrencyCode})");
             Console.Write($"Enter amount to transfer (in {chosenToAccount.Currency.CurrencyCode}): ");
             int amount = int.Parse(Console.ReadLine());
             // först validate it is an amount!!
@@ -100,57 +107,39 @@ namespace MandelsBankenConsole.AccountHandler
             }
             else
             {
-                // ---------------------------------------------------
-                // ---------------------------------------------------
-                //Console.WriteLine("testar omvandlingen");
-                // ---------------------------------------------------
-                // ---------------------------------------------------
-
-
-                // method for converting 
+                // method for currency exchange
                 var (resultIndecimal, infoDescription) = await _conversion.ConvertCurrency(chosenToAccount.Currency.CurrencyCode, chosenFromAccount.Currency.CurrencyCode, amount);
-
-                //await Console.Out.WriteLineAsync(resultIndecimal.ToString());
-                //await Console.Out.WriteLineAsync(infoDescription);
-
-
-                // ---------------------------------------------------
-                // ---------------------------------------------------
-
                 amountFrom = Math.Round(resultIndecimal, 2);// nice bank, not stealing the roundups
                 amountTo = amount;
             }
 
 
+            // Make transaction
 
-            transactionInfoFrom = $"Transfer {amountFrom} {chosenFromAccount.Currency.CurrencyCode} from this account";
-            transactionInfoTo = $"Transfer {amountTo} {chosenToAccount.Currency.CurrencyCode} to this account";
-            //Console.WriteLine(transactionInfoFrom);
-            //Console.WriteLine(transactionInfoTo);
+            // Two transactions are happening and both need to be successful
+            // First transactions is associated with the outgoing account
+            // Second transaction is associated with the receiving account
+
+            transactionInfoFrom = $"Transfer {amountFrom} {chosenFromAccount.Currency.CurrencyCode} to account {chosenToAccount.AccountNumber} {chosenToAccount.AccountName}";
+            transactionInfoTo = $"Transfer {amountTo} {chosenToAccount.Currency.CurrencyCode} from account {chosenFromAccount.AccountNumber} {chosenFromAccount.AccountName}";
 
             bool transactionSucceeded = DbHelper.MakeTransaction(_bankenContext, chosenFromAccount, -amountFrom, transactionInfoFrom);
             if (transactionSucceeded)
             {
                 if (DbHelper.MakeTransaction(_bankenContext, chosenToAccount, amountTo, transactionInfoTo))
                 {
-                    Console.WriteLine("Hurray!");
+                    Console.WriteLine("Bank transfer successful!");
                     Console.WriteLine($"{DbHelper.GetAccountInformation(new List<Account>() { chosenFromAccount })[0]}");
                     Console.WriteLine($"{DbHelper.GetAccountInformation(new List<Account>() { chosenToAccount })[0]}");
 
                 }
+                
             }
 
 
 
         }
 
-        // actually i do want to get an "int" from ShowMenu
-        public static bool ChooseAccount(int optionIndex)
-        {
-            Console.WriteLine("Chosen account: " + optionIndex);
-            return true;
-
-        }
 
     }
 }
