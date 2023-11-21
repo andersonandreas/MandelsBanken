@@ -21,8 +21,14 @@
 
                 return await response.Content.ReadAsStringAsync();
             }
-            catch (Exception)
+            catch (HttpRequestException e)
             {
+                await Console.Out.WriteLineAsync($"HTTP Reguest Error: {e.Message}");
+                throw;
+            }
+            catch (Exception e)
+            {
+                await Console.Out.WriteLineAsync($"Error : {e.Message}");
                 throw;
             }
         }

@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace MandelsBankenConsole.RootJsonObject
+namespace MandelsBankenConsole.API.RootJsonObject
 {
 
     // structure for the json object that the api is returning

@@ -1,7 +1,5 @@
-﻿using MandelsBankenConsole.AccountHandler;
-using MandelsBankenConsole.Data;
-using MandelsBankenConsole.InputValidator;
-using MandelsBankenConsole.UserHandler;
+﻿using MandelsBankenConsole.Data;
+using MandelsBankenConsole.MandelBankApp;
 
 namespace MandelsBankenConsole
 {
@@ -9,41 +7,43 @@ namespace MandelsBankenConsole
     {
         static async Task Main(string[] args)
         {
-            var context = new BankenContext();
-            //IAPIDataReaderCurrency apiDataReader = new APIDataReaderCurrency();
-            IValidateUserInput userInputValidator = new ValidateUserInput(
-                new CharValidator(),
-                new NumberValidator());
 
+            try
+            {
 
+                var firstConnectionBehindScenes = Task.Run(() => FastenUp());
 
-            // istallet for alla rader i era klasser 
-            var exchange = CurrencyInitExchange.InitCurrencyHandler();
+                AppBank appBank = new AppBank();
+                appBank.Run();
+                await firstConnectionBehindScenes;
 
-            // allt detta kommer flyttas till en klass dar vi har en mehtod som lagger allt detta i en method och so kor vi methoden i program main. 
-            var accountManager = new AccountManager(userInputValidator, context, new Random());
-
-            var adminFunctions = new AdminFunctions(accountManager, context);
-            var depositMoneyFunctions = new DepositMoneyFunctions(exchange);
-            var banking = new BankTransfer(context, exchange);
-            var showAccount = new ShowAccount(context);
-            var withdrawMoneyFunctions = new WithdrawMoneyFunctions(context, exchange);
-            var menuFunctions = new MenuFunctions(context, accountManager, depositMoneyFunctions, adminFunctions, banking, withdrawMoneyFunctions, showAccount);
-
-
-
-            menuFunctions.LogIn();
-
-
-
+            }
+            catch (Exception)
+            {
+                await Console.Out.WriteLineAsync("The appliaction closing..");
+            }
 
 
         }
 
 
+        // just a linq queryy to start up a connetion behind the scenes.
+        // so when the user is provding succeful login details, the user are directly loged in so the user not waiting for the database connection to appeare.
+        public static void FastenUp()
+        {
+            using (BankenContext context = new BankenContext())
+            {
+                context.Users
+                   .Any();
+            }
 
 
+
+        }
     }
+
+
+
 }
 
 

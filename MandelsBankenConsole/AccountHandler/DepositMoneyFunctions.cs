@@ -1,6 +1,8 @@
 ﻿using MandelsBankenConsole.CurrencyConverter;
 using MandelsBankenConsole.Data;
+using MandelsBankenConsole.InputValidator;
 using MandelsBankenConsole.Models;
+using MandelsBankenConsole.Utilities;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 
@@ -9,12 +11,13 @@ namespace MandelsBankenConsole.AccountHandler
     public class DepositMoneyFunctions
     {
         private ExchangeCurrency _conversion;
+        private readonly IValidateUserInput _validateUserInput;
         private MenuFunctions _menuFunctions = new();
 
-        public DepositMoneyFunctions(ExchangeCurrency conversion)
+        public DepositMoneyFunctions(ExchangeCurrency conversion, IValidateUserInput validateUserInput)
         {
             _conversion = conversion;
-
+            _validateUserInput = validateUserInput;
         }
 
         public async void DepositMoney(User loggedInUser)
@@ -42,7 +45,7 @@ namespace MandelsBankenConsole.AccountHandler
 
                 //gets amount to deposit
                 Console.WriteLine("How much money would you like to deposit?");
-                decimal depositedMoney = decimal.Parse(Console.ReadLine());
+                decimal depositedMoney = _validateUserInput.Amount();
 
                 //gets currency and checks if it matches a currency in the database
                 Console.WriteLine("What currency is it in? Write its 3 letter currency code");
@@ -51,7 +54,8 @@ namespace MandelsBankenConsole.AccountHandler
 
                 if (!currencyCodeExists) //gives error if it is not in the database and returns to main menu
                 {
-                    Console.WriteLine("Error: Currency code does not exist");
+                    ConsoleHelper.PrintColorRed("Error: Currency code does not exist");
+                    //Console.WriteLine("Error: Currency code does not exist");
                     return;
                 }
                 else if (currencyInput != selectedAccount.Currency.CurrencyCode) //convert currency if not same as in account
@@ -81,7 +85,8 @@ namespace MandelsBankenConsole.AccountHandler
                 context.SaveChanges(); //saves changes to the database
 
                 //Reciept to the Console of what was done
-                Console.WriteLine($"{depositedMoney} {currencyInput} deposited to account: {selectedAccount.AccountName} - {selectedAccount.AccountNumber}. \nNew balance: {selectedAccount.Balance} {selectedAccount.Currency.CurrencyCode}");
+                //Console.WriteLine($"{depositedMoney} {currencyInput} deposited to account: {selectedAccount.AccountName} - {selectedAccount.AccountNumber}. \nNew balance: {selectedAccount.Balance} {selectedAccount.Currency.CurrencyCode}");
+                ConsoleHelper.PrintColorGreen($"{depositedMoney} {currencyInput} deposited to account: {selectedAccount.AccountName} - {selectedAccount.AccountNumber}. \nNew balance: {selectedAccount.Balance} {selectedAccount.Currency.CurrencyCode}");
             }
         }
 
