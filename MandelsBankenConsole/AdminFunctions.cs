@@ -26,25 +26,22 @@ namespace MandelsBankenConsole
 
         public void DoAdminTasks()
         {
-            ShowAllUsers();
-
-            string[] adminMenu = new string[] { "create new user", "return to main menu", "exit" };
-            var adminChoice = _menuFunctions.ShowMenu(adminMenu);
-
-
+            List<string> adminMenu = new List<string> { "Create new user", "Show all users", "Exit" };
+           
             while (true)
             {
-
+                var adminChoice = _menuFunctions.ShowMenu(adminMenu);
                 switch (adminChoice)
                 {
                     case 0:
                         CreateUser();
                         break;
                     case 1:
-                        _menuFunctions.LogIn();
-                        return;
+                        ShowAllUsers();
+                        Console.ReadLine();
+                        break;
                     case 2:
-                        Console.WriteLine("closed the app");
+                        Console.WriteLine("Exiting app");
                         return;
                 }
             }
@@ -60,9 +57,9 @@ namespace MandelsBankenConsole
             {
                 Console.WriteLine($"{user.CustomerName}");
             }
-
+            Console.WriteLine("-------------------------------------------");
             Console.WriteLine($"Total users: {users.Count()}");
-            Console.WriteLine("-------------------------------------------\n");
+            Console.WriteLine("-------------------------------------------");
         }
 
         private void CreateUser()

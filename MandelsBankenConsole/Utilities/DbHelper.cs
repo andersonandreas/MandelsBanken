@@ -27,7 +27,7 @@ namespace MandelsBankenConsole.Utilities
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Error adding user: {e}");
+                ConsoleHelper.PrintColorRed($"Error adding user: {e}");
                 return false;
             }
             return true;
@@ -71,7 +71,7 @@ namespace MandelsBankenConsole.Utilities
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Error updating balance: {e}");
+                ConsoleHelper.PrintColorRed($"Error updating balance: {e}");
                 return false;
             }
 
@@ -99,7 +99,7 @@ namespace MandelsBankenConsole.Utilities
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Error adding transaction: {e}");
+                ConsoleHelper.PrintColorRed($"Error adding transaction: {e}");
                 return false;
             }
             return true;
@@ -110,8 +110,8 @@ namespace MandelsBankenConsole.Utilities
 
             if (account.Balance + amount < 0)
             {
-                Console.WriteLine($"You don't have enough funds in your account to perform this transaction.");
-                Console.WriteLine($"Your balance is {account.Balance} {account.Currency.CurrencyCode}, you try to use -{amount} {account.Currency.CurrencyCode}.");
+                ConsoleHelper.PrintColorRed($"You don't have enough funds in your account to perform this transaction.");
+                ConsoleHelper.PrintColorRed($"Your balance is {account.Balance} {account.Currency.CurrencyCode}, you try to use -{amount} {account.Currency.CurrencyCode}.");
                 return false;
             }
 

@@ -33,13 +33,13 @@ namespace MandelsBankenConsole.InputValidator
             ValidateInput("account name", 5, 50, _charValidator);
 
         public string FullName() =>
-            ValidateInput("first and lastname", 3, 50, _charValidator);
+            ValidateInput("first and last name", 3, 50, _charValidator);
 
 
         // only if I have time.
         // maybe add some more here to check how many tries the user trues to log in then let he user contect the bank ater some failed tries.
         public string Pin() =>
-            ValidateInput("Pid code", 4, 5, _numberValidator);
+            ValidateInput("pin code", 4, 5, _numberValidator);
 
         public string SocialNumber() =>
             ValidateInput("(social security number YYYYMMDD-XXXX)", 13, 13, _socialNumber);

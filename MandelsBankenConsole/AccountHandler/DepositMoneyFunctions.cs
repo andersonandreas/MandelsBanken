@@ -3,9 +3,6 @@ using MandelsBankenConsole.Data;
 using MandelsBankenConsole.InputValidator;
 using MandelsBankenConsole.Models;
 using MandelsBankenConsole.Utilities;
-using Microsoft.EntityFrameworkCore;
-using System.Data;
-using System.Security.Principal;
 
 namespace MandelsBankenConsole.AccountHandler
 {
@@ -31,12 +28,10 @@ namespace MandelsBankenConsole.AccountHandler
             List<Account> userAccounts = DbHelper.GetAllAccounts(_bankenContext, loggedInUser);
 
             //adds accountinformation to an array for the menu
-            string[] usersAccountsMenuOptions = userAccounts
-                .Select(account => $"{account.AccountName} - {account.AccountNumber} | {account.Currency.CurrencyCode} ")
-                .ToArray();
+            List<string> userAccountsDescription = DbHelper.GetAccountInformation(userAccounts);
 
             //starts the menu // addded the  _menuFunctions,  instead of the call to the static class (MenuFunctions)
-            int selectedMenuOption = _menuFunctions.ShowMenu(usersAccountsMenuOptions, "Which account would you like to deposit to?");
+            int selectedMenuOption = _menuFunctions.ShowMenu(userAccountsDescription, "Which account would you like to deposit to?");
             Account selectedAccount = userAccounts[selectedMenuOption];
                 
             //gets amount to deposit
@@ -46,12 +41,15 @@ namespace MandelsBankenConsole.AccountHandler
 
             //gets currency and checks if it matches a currency in the database
             Console.WriteLine("What currency is it in? Write its 3 letter currency code");
-            string currencyInput = Console.ReadLine();
+            string currencyInput = _validateUserInput.CodeCurrency();
 
             //convert currency if not same as in account, changes deposited amount to same currency, adds convertioninformation to the description
             if (currencyInput != selectedAccount.Currency.CurrencyCode)
             {
-                var (resultIndecimal, infoDescription) = await _conversion.ConvertCurrency(currencyInput, selectedAccount.Currency.CurrencyCode, depositedMoney);
+
+                var conversionResult = Task.Run(() => _conversion.ConvertCurrency(currencyInput, selectedAccount.Currency.CurrencyCode, depositedMoney)).Result;
+
+                var (resultIndecimal, infoDescription) = conversionResult;
 
                 depositedMoney = resultIndecimal;
                 depositDescription = $"{depositDescription}, {infoDescription}";
@@ -60,7 +58,8 @@ namespace MandelsBankenConsole.AccountHandler
             //Makes transaction, adds transaction history and prints reciept to the Console of what was done
             if (DbHelper.MakeTransaction(_bankenContext, selectedAccount, depositedMoney, depositDescription))
             {
-                Console.WriteLine($"{depositedMoney} {currencyInput} deposited to account: {selectedAccount.AccountNumber} - {selectedAccount.AccountName}. \nNew balance: {selectedAccount.Balance} {selectedAccount.Currency.CurrencyCode}");
+                Console.Clear();
+                ConsoleHelper.PrintColorGreen($"{depositedMoney:# ##0.##} {selectedAccount.Currency.CurrencyCode} deposited to account: {selectedAccount.AccountNumber} - {selectedAccount.AccountName}. \nNew balance: {selectedAccount.Balance:# ##0.##} {selectedAccount.Currency.CurrencyCode}");
             }
         }
     }

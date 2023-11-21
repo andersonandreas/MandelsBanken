@@ -20,8 +20,8 @@ namespace MandelsBankenConsole.MandelBankApp
             var exchange = CurrencyInitExchange.InitCurrencyHandler();
             var accountManager = new AccountManager(userInputValidator, context, new Random());
             var adminFunctions = new AdminFunctions(accountManager, context, userInputValidator);
-            var depositMoneyFunctions = new DepositMoneyFunctions(exchange, userInputValidator);
-            var banking = new BankTransfer(context, exchange);
+            var depositMoneyFunctions = new DepositMoneyFunctions(context, exchange, userInputValidator);
+            var banking = new BankTransfer(context, exchange, userInputValidator);
             var showAccount = new ShowAccount(context);
             var withdrawMoneyFunctions = new WithdrawMoneyFunctions(context, exchange, userInputValidator);
             var menuFunctions = new MenuFunctions(
