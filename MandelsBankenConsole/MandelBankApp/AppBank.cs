@@ -15,7 +15,7 @@ namespace MandelsBankenConsole.MandelBankApp
 
             var context = new BankenContext();
             IValidateUserInput userInputValidator = new ValidateUserInput(new CharValidator(),
-                new NumberValidator(), new SocialNumberValidor(), new ValidateLoginSocial());
+                new NumberValidator(), new SocialNumberValidor(), new ValidateLoginSocial(), context);
 
             var exchange = CurrencyInitExchange.InitCurrencyHandler();
             var accountManager = new AccountManager(userInputValidator, context, new Random());

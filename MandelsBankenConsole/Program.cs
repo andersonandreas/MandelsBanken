@@ -11,6 +11,8 @@ namespace MandelsBankenConsole
             try
             {
 
+
+
                 var firstConnectionBehindScenes = Task.Run(() => FastenUp());
 
                 AppBank appBank = new AppBank();

@@ -97,6 +97,7 @@ namespace MandelsBankenConsole.UserHandler
 
 
         //  check if userinput exits in thedatabase from the userinput and if so returning a index of the currencycode and
+        // should be making just one and with a overload insead of two methods..
         private int IdCurrency()
         {
             int currencyId = default;

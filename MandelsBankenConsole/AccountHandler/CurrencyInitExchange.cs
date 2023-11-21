@@ -1,5 +1,6 @@
 ﻿using MandelsBankenConsole.API;
 using MandelsBankenConsole.CurrencyConverter;
+using MandelsBankenConsole.Data;
 using MandelsBankenConsole.InputValidator;
 
 namespace MandelsBankenConsole.AccountHandler
@@ -14,7 +15,8 @@ namespace MandelsBankenConsole.AccountHandler
                 new CharValidator(),
                 new NumberValidator(),
                  new SocialNumberValidor(),
-                 new ValidateLoginSocial());
+                 new ValidateLoginSocial(),
+                 new BankenContext());
 
 
             return new ExchangeCurrency(new CurrencyHandler(validateUserInput, aPIDataReader));

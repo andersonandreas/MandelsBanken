@@ -1,4 +1,5 @@
-﻿using MandelsBankenConsole.Utilities;
+﻿using MandelsBankenConsole.Data;
+using MandelsBankenConsole.Utilities;
 
 namespace MandelsBankenConsole.InputValidator
 {
@@ -8,15 +9,17 @@ namespace MandelsBankenConsole.InputValidator
         private readonly IValidator _numberValidator;
         private readonly IValidator _socialNumber;
         private readonly IValidator _checkLoginSocialAndAdmin;
+        private readonly BankenContext _bankenContext;
 
 
         public ValidateUserInput(IValidator charValidator, IValidator numericValidator,
-            IValidator socialNumber, IValidator checkLoginSocialAndAdmin)
+            IValidator socialNumber, IValidator checkLoginSocialAndAdmin, BankenContext bankenContext)
         {
             _charValidator = charValidator;
             _numberValidator = numericValidator;
             _socialNumber = socialNumber;
             _checkLoginSocialAndAdmin = checkLoginSocialAndAdmin;
+            _bankenContext = bankenContext;
         }
 
 
@@ -56,16 +59,15 @@ namespace MandelsBankenConsole.InputValidator
                 return amount;
             }
 
-            // i need to fix this.....
-            Console.WriteLine("Invalid input for amout...");
-            return 0;
+            // i need to fix this...
+            throw new InvalidOperationException("Invalid input for amount");
         }
 
 
         public decimal Amount(string messange)
         {
 
-            // Enter: fidfjfjdjfdfj
+
             string input = ValidateInput(messange, 1, 11, _numberValidator);
 
             if (decimal.TryParse(input, out decimal amount))
@@ -74,9 +76,38 @@ namespace MandelsBankenConsole.InputValidator
             }
 
             // i need to fix this.....
-            Console.WriteLine("Invalid input for amout...");
-            return 0;
+            throw new InvalidOperationException("Invalid input for amount");
         }
+
+
+
+        public string CurrencyCodeUserInput()
+        {
+            string currencyCodeInput = default;
+            bool currencyExists;
+
+            do
+            {
+                var currencyCode = CodeCurrency();
+
+                currencyExists = _bankenContext.Currencies
+                    .Any(c => c.CurrencyCode == currencyCode);
+
+                if (!currencyExists)
+                {
+                    ConsoleHelper.PrintColorRed("Invalid currency code. Please try again.");
+                }
+                else
+                {
+                    currencyCodeInput = currencyCode;
+                }
+
+
+            } while (!currencyExists);
+
+            return currencyCodeInput;
+        }
+
 
 
 
