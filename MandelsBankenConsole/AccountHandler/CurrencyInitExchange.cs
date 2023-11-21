@@ -12,7 +12,9 @@ namespace MandelsBankenConsole.AccountHandler
             IAPIDataReaderCurrency aPIDataReader = new APIDataReaderCurrency();
             IValidateUserInput validateUserInput = new ValidateUserInput(
                 new CharValidator(),
-                new NumberValidator());
+                new NumberValidator(),
+                 new SocialNumberValidor(),
+                 new ValidateLoginSocial());
 
 
             return new ExchangeCurrency(new CurrencyHandler(validateUserInput, aPIDataReader));

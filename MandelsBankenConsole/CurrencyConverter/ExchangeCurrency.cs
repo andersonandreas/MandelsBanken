@@ -20,14 +20,7 @@
                 amount);
 
 
-            //put your other methods here and input this values into it.
-            //convertResult = decimal value after conversion
-            //InfoForDesc = string with the description
-            //just logging for show.can remove it, if you dont need it.
-
-
             return (convertResult, InfoForDesc);
-
         }
     }
 }

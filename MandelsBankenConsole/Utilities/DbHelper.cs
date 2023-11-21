@@ -128,5 +128,10 @@ namespace MandelsBankenConsole.Utilities
             return true;
         }
 
+
+
+
+
+
     }
 }

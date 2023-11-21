@@ -1,5 +1,6 @@
 ﻿using MandelsBankenConsole.CurrencyConverter;
 using MandelsBankenConsole.Data;
+using MandelsBankenConsole.InputValidator;
 using MandelsBankenConsole.Models;
 using MandelsBankenConsole.Utilities;
 using Microsoft.EntityFrameworkCore;
@@ -12,12 +13,14 @@ namespace MandelsBankenConsole.AccountHandler
     {
         private readonly BankenContext _bankenContext;
         private ExchangeCurrency _conversion;
+        private readonly IValidateUserInput _validateUserInput;
         private MenuFunctions _menuFunctions = new();
 
-        public DepositMoneyFunctions(BankenContext bankenContext, ExchangeCurrency conversion)
+        public DepositMoneyFunctions(BankenContext bankenContext, ExchangeCurrency conversion, IValidateUserInput validateUserInput)
         {
             _conversion = conversion;
             _bankenContext = bankenContext;
+            _validateUserInput = validateUserInput;
         }
 
         public async void DepositMoney(User loggedInUser)
@@ -35,10 +38,11 @@ namespace MandelsBankenConsole.AccountHandler
             //starts the menu // addded the  _menuFunctions,  instead of the call to the static class (MenuFunctions)
             int selectedMenuOption = _menuFunctions.ShowMenu(usersAccountsMenuOptions, "Which account would you like to deposit to?");
             Account selectedAccount = userAccounts[selectedMenuOption];
-
+                
             //gets amount to deposit
-            Console.WriteLine("How much money would you like to deposit?");
-            decimal depositedMoney = decimal.Parse(Console.ReadLine());
+                Console.WriteLine("How much money would you like to deposit?");
+                decimal depositedMoney = _validateUserInput.Amount();
+
 
             //gets currency and checks if it matches a currency in the database
             Console.WriteLine("What currency is it in? Write its 3 letter currency code");

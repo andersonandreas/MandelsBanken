@@ -7,6 +7,9 @@
         decimal Amount();
         string AccountName();
         string CodeCurrency();
+        string FullName();
+        string SocialNumber();
+        string Pin();
 
     }
 }
