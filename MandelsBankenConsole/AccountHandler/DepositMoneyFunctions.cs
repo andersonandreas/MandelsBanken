@@ -59,6 +59,10 @@ namespace MandelsBankenConsole.AccountHandler
                 Console.Clear();
                 ConsoleHelper.PrintColorGreen($"{depositedMoney:# ##0.##} {selectedAccount.Currency.CurrencyCode} deposited to account: {selectedAccount.AccountNumber} - {selectedAccount.AccountName}. \nNew balance: {selectedAccount.Balance:# ##0.##} {selectedAccount.Currency.CurrencyCode}");
             }
+
+            Console.WriteLine("Press enter to return to main menu.");
         }
+
+
     }
 }

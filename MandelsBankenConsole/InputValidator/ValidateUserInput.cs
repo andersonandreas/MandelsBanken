@@ -22,18 +22,17 @@ namespace MandelsBankenConsole.InputValidator
             _bankenContext = bankenContext;
         }
 
-
         public string BaseCurrency() =>
-            ValidateInput("base currency", 3, 4, _charValidator);
+            ValidateInput("base currency", 3, 3, _charValidator);
 
         public string TargetCurrency() =>
-            ValidateInput("target currency", 3, 4, _charValidator);
+            ValidateInput("target currency", 3, 3, _charValidator);
 
         public string CodeCurrency() =>
-    ValidateInput("currency for account", 3, 4, _charValidator);
+    ValidateInput("currency for account", 3, 3, _charValidator);
 
         public string AccountName() =>
-            ValidateInput("account name", 5, 50, _charValidator);
+            ValidateInput("account name", 2, 50, _charValidator);
 
         public string FullName() =>
             ValidateInput("first and last name", 3, 50, _charValidator);
@@ -42,7 +41,7 @@ namespace MandelsBankenConsole.InputValidator
         // only if I have time.
         // maybe add some more here to check how many tries the user trues to log in then let he user contect the bank ater some failed tries.
         public string Pin() =>
-            ValidateInput("pin code", 4, 5, _numberValidator);
+            ValidateInput("pin code", 4, 4, _numberValidator);
 
         public string SocialNumber() =>
             ValidateInput("(social security number YYYYMMDD-XXXX)", 13, 13, _socialNumber);
@@ -64,11 +63,11 @@ namespace MandelsBankenConsole.InputValidator
         }
 
 
-        public decimal Amount(string messange)
+        public decimal Amount(string message)
         {
 
 
-            string input = ValidateInput(messange, 1, 11, _numberValidator);
+            string input = ValidateInput(message, 1, 11, _numberValidator);
 
             if (decimal.TryParse(input, out decimal amount))
             {

@@ -64,7 +64,6 @@ namespace MandelsBankenConsole.AccountHandler
                     {
                         if (userInput == 1)
                         {
-                            Console.WriteLine("Returning to menu.");
                             return;
                         }
 
@@ -91,7 +90,7 @@ namespace MandelsBankenConsole.AccountHandler
             //Going into this selection, to see if transaction will or will not be made.
             if (!VerifyPin(loggedInUser.Id))
             {
-                ConsoleHelper.PrintColorRed("Pin attempts exhausted. Press enter to return to main manu.");
+                ConsoleHelper.PrintColorRed("Pin attempts exhausted. Press enter to return to main menu.");
                 return;
             }
             else

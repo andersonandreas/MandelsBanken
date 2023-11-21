@@ -27,7 +27,7 @@ namespace MandelsBankenConsole
         public void DoAdminTasks()
         {
             List<string> adminMenu = new List<string> { "Create new user", "Show all users", "Exit" };
-           
+
             while (true)
             {
                 var adminChoice = _menuFunctions.ShowMenu(adminMenu);
@@ -42,6 +42,7 @@ namespace MandelsBankenConsole
                         break;
                     case 2:
                         Console.WriteLine("Exiting app");
+                        Environment.Exit(0);
                         return;
                 }
             }

@@ -30,11 +30,14 @@ namespace MandelsBankenConsole.AccountHandler
                 return;
             }
 
-            Console.WriteLine("Dina konton: ");
+            Console.WriteLine("Your accounts: ");
             foreach (string accountDesc in userAccountsDescription)
             {
                 Console.WriteLine($"\t{accountDesc}");
             }
+
+
+            Console.WriteLine("Press enter to return to main menu.");
 
         }
     }

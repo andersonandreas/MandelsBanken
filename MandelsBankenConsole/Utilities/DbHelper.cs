@@ -37,20 +37,21 @@ namespace MandelsBankenConsole.Utilities
         {
 
             return context.Accounts
-               .Include(acc => acc.Currency) 
+               .Include(acc => acc.Currency)
                .Where(acc => acc.UserId == user.Id)
                .ToList();
-            
+
         }
 
         public static List<string> GetAccountInformation(List<Account> accounts, bool balanceOverOwner = true)
         {
             // Creates a list of string with descriptive information on the chosen accounts
 
-            if (balanceOverOwner) { 
-            return accounts
-                .Select(a => $"Account: {a.AccountNumber} - {a.AccountName} | Balance: {a.Balance:# ##0.##} {a.Currency.CurrencyCode}")
-                .ToList();
+            if (balanceOverOwner)
+            {
+                return accounts
+                    .Select(a => $"Account: {a.AccountNumber} - {a.AccountName} | Balance: {a.Balance:# ##0.##} {a.Currency.CurrencyCode}")
+                    .ToList();
             }
 
             return accounts
@@ -85,13 +86,13 @@ namespace MandelsBankenConsole.Utilities
 
             Transaction newTransaction = new Transaction()
             {
-                TransactionAmount=amount,
-                Balance=account.Balance,
-                Description=transactionInfo,
+                TransactionAmount = amount,
+                Balance = account.Balance,
+                Description = transactionInfo,
                 Date = DateTime.Now,
                 AccountId = account.Id,
 
-        };
+            };
             context.Transactions.Add(newTransaction);
             try
             {
@@ -120,7 +121,7 @@ namespace MandelsBankenConsole.Utilities
                 return false;
             }
 
-            if (!AddTransaction(context, account, amount,transactionInfo)) 
+            if (!AddTransaction(context, account, amount, transactionInfo))
             {
                 return false;
             }
@@ -129,7 +130,17 @@ namespace MandelsBankenConsole.Utilities
         }
 
 
+        // just a linq queryy to start up a connetion behind the scenes.
+        // so when the user is provding succeful login details, the user are directly loged in so the user not waiting for the database connection to appeare.
 
+        public static void FastenUp()
+        {
+            using (BankenContext context = new BankenContext())
+            {
+                context.Users
+                   .Any();
+            }
+        }
 
 
 

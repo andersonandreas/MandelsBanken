@@ -46,7 +46,7 @@ namespace MandelsBankenConsole.UserHandler
                 .FirstOrDefault();
 
             var number = GenerateAccountNum();
-            var name = "Defualt checking account";
+            var name = "Checking account";
             var type = AccountType.Checking;
             var initialDepo = 0m;
             var currencyId = sekCurrency;
