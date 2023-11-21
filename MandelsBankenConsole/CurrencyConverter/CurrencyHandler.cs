@@ -1,6 +1,6 @@
 ﻿using MandelsBankenConsole.API;
+using MandelsBankenConsole.API.RootJsonObject;
 using MandelsBankenConsole.InputValidator;
-using MandelsBankenConsole.RootJsonObject;
 using System.Text.Json;
 
 namespace MandelsBankenConsole.CurrencyConverter
@@ -34,7 +34,7 @@ namespace MandelsBankenConsole.CurrencyConverter
             }
             catch (Exception ex)
             {
-                // i need to make this error more specfic
+
                 Console.WriteLine($"Error: {ex.Message}");
                 throw;
 

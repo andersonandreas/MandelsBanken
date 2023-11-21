@@ -1,21 +1,28 @@
 ﻿using MandelsBankenConsole.CurrencyConverter;
 using MandelsBankenConsole.Data;
+using MandelsBankenConsole.InputValidator;
 using MandelsBankenConsole.Models;
 using MandelsBankenConsole.Utilities;
 namespace MandelsBankenConsole.AccountHandler
 {
     public class WithdrawMoneyFunctions
     {
+
+
         private readonly BankenContext _bankenContext;
         private readonly ExchangeCurrency _conversion;
+        private readonly IValidateUserInput _validateUserInput;
         private readonly MenuFunctions _menuFunctions = new MenuFunctions();
 
-        public WithdrawMoneyFunctions(BankenContext bankenContext, ExchangeCurrency exchangeCurrency)
+        public WithdrawMoneyFunctions(BankenContext bankenContext, ExchangeCurrency exchangeCurrency, IValidateUserInput validateUserInput)
         {
             _bankenContext = bankenContext;
             _conversion = exchangeCurrency;
+            _validateUserInput = validateUserInput;
         }
-        //View available accounts and balance.
+
+
+
         public void WithdrawMoney(User loggedInUser)
         {
             int selectedIndex = 0;
@@ -30,10 +37,12 @@ namespace MandelsBankenConsole.AccountHandler
             Account selectedAccount = userAccounts[selectedIndex];
             MakeMoneyWithdrawal(loggedInUser, selectedAccount);
         }
+
         //This method will ask for valid withdrawal amount + pin
         //Loop will check for valid input
         private void MakeMoneyWithdrawal(User loggedInUser, Account account)
         {
+
             Console.Clear();
             Console.WriteLine("Please, enter withdrawal amount in SEK. If you want to exit withdrawal menu, press 1.");
             int userInput;
@@ -58,9 +67,11 @@ namespace MandelsBankenConsole.AccountHandler
                             Console.WriteLine("Returning to menu.");
                             return;
                         }
+
                         else
                         {
                             var conversionResult = Task.Run(() => _conversion.ConvertCurrency("SEK", accountCurrencyCode, userInput)).Result;
+
                             var (resultIndecimal, infoDescription) = conversionResult;
                             amount = resultIndecimal;
                             Console.WriteLine("Loading... Did you know that almonds are related to peaches?");
@@ -86,13 +97,15 @@ namespace MandelsBankenConsole.AccountHandler
             else
             {
                 Console.Clear();
+
                 if (DbHelper.MakeTransaction(_bankenContext, account, -amount, "Withdrawal"))
                 {
-                    Console.WriteLine($"The withdrawal has been executed. New balance is: {account.Balance:# ##0.##} {accountCurrencyCode}. Press enter to return to main menu.");
+                    ConsoleHelper.PrintColorGreen($"The withdrawal has been executed. New balance is: {account.Balance:# ##0.##} {accountCurrencyCode}. Press enter to return to main menu.");
                     Console.ReadKey();
                 }
             }
         }
+
         //Method for verifying pin. If bool returns true, transaction will be made.
         //If user fails three times, they will return to main menu.
         private bool VerifyPin(int loggedInUserId)
@@ -101,12 +114,15 @@ namespace MandelsBankenConsole.AccountHandler
             .Where(u => u.Id == loggedInUserId)
             .Select(u => u.Pin)
             .FirstOrDefault();
+
             int pinAttempts = 0;
             while (pinAttempts < 3)
             {
                 Console.Clear();
                 Console.WriteLine("Please, verify your withdrawal with pin.");
-                string pin = Console.ReadLine();
+
+                string pin = _validateUserInput.Pin();
+
                 if (usersPin == pin)
                 {
                     return true;

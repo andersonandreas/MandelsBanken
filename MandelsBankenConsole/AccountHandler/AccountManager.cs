@@ -1,6 +1,7 @@
 ﻿using MandelsBankenConsole.Data;
 using MandelsBankenConsole.InputValidator;
 using MandelsBankenConsole.Models;
+using MandelsBankenConsole.Utilities;
 
 namespace MandelsBankenConsole.UserHandler
 {
@@ -43,9 +44,6 @@ namespace MandelsBankenConsole.UserHandler
                 .Where(u => u.CurrencyCode == "SEK")
                 .Select(u => u.Id)
                 .FirstOrDefault();
-
-
-
 
             var number = GenerateAccountNum();
             var name = "Defualt checking account";
@@ -95,35 +93,41 @@ namespace MandelsBankenConsole.UserHandler
         }
 
 
-        private AccountType AccountTypeChoice()
-        {
-
-            Console.WriteLine("Account type:");
-            Console.WriteLine("1 = Checking");
-            Console.WriteLine("2 = Savings");
-
-            switch (Console.ReadLine())
-            {
-                case "1":
-                    return AccountType.Checking;
-                case "2":
-                    return AccountType.Savings;
-                default:
-                    return AccountType.Savings;
-            }
-
-        }
+        private AccountType AccountTypeChoice() => AccountType.Savings;
 
 
+        //  check if userinput exits in thedatabase from the userinput and if so returning a index of the currencycode and
         private int IdCurrency()
         {
-            var currencyId = _validateUserInput.CodeCurrency();
+            int currencyId = default;
+            bool currencyExists;
 
-            return _bankenContext.Currencies
-             .Where(c => c.CurrencyCode == currencyId)
-             .Select(c => c.Id)
-             .FirstOrDefault();
+            do
+            {
+                var currencyCode = _validateUserInput.CodeCurrency();
+
+                currencyExists = _bankenContext.Currencies
+                    .Any(c => c.CurrencyCode == currencyCode);
+
+                if (!currencyExists)
+                {
+                    ConsoleHelper.PrintColorRed("Invalid currency code. Please try again.");
+                }
+                else
+                {
+                    currencyId = _bankenContext.Currencies
+                        .Where(c => c.CurrencyCode == currencyCode)
+                        .Select(c => c.Id)
+                        .FirstOrDefault();
+                }
+
+            } while (!currencyExists);
+
+            return currencyId;
         }
+
+
+
 
     }
 }

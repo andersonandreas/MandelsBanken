@@ -1,5 +1,6 @@
 ﻿using MandelsBankenConsole.AccountHandler;
 using MandelsBankenConsole.Data;
+using MandelsBankenConsole.InputValidator;
 using MandelsBankenConsole.Models;
 using MandelsBankenConsole.UserHandler;
 using MandelsBankenConsole.Utilities;
@@ -20,13 +21,15 @@ namespace MandelsBankenConsole
         private readonly BankTransfer _bankTransfer;
         private readonly WithdrawMoneyFunctions _withdrawMoneyFunctions;
         private readonly ShowAccount _showAccount;
+        private readonly IValidateUserInput _validateUserInput;
 
 
         private static User loggedInUser;
         public MenuFunctions() { }
 
         public MenuFunctions(BankenContext bankenContext, AccountManager accountManager, DepositMoneyFunctions depositMoneyFunctions,
-            AdminFunctions adminFunctions, BankTransfer banking, WithdrawMoneyFunctions withdrawMoneyFunctions, ShowAccount showAccount)
+            AdminFunctions adminFunctions, BankTransfer banking, WithdrawMoneyFunctions withdrawMoneyFunctions, ShowAccount showAccount,
+            IValidateUserInput validateUserInput = null)
         {
             _bankenContext = bankenContext;
             _accountManager = accountManager;
@@ -35,32 +38,33 @@ namespace MandelsBankenConsole
             _bankTransfer = banking;
             _withdrawMoneyFunctions = withdrawMoneyFunctions;
             _showAccount = showAccount;
+            _validateUserInput = validateUserInput;
         }
 
         public void LogIn()
         {
+
             Console.WriteLine("Welcome to Mandelsbank!");
-            Thread.Sleep(500);
+            //Thread.Sleep(500);
 
             Console.WriteLine("Making banking smooth as almond milk");
-            Thread.Sleep(750);
+            //Thread.Sleep(750);
 
             Console.WriteLine("Please log in");
 
-            Console.Write("Enter username (social security number YYYYMMDD-XXXX):");
-            string userLogInInput = Console.ReadLine();
-
-            Console.Write("Enter pin code:");
-            string pin = Console.ReadLine();
+            //Console.WriteLine("Enter socialnumber: ");
+            string userLogInInput = _validateUserInput.SocialNumber();
+            string pin = _validateUserInput.Pin();
 
             int choice = 0;
-            if (userLogInInput == "admin")
+            if (userLogInInput.ToLower() == "admin")
             {
                 if (pin != "1234")
                 {
-                    Console.WriteLine("Invalid password!");
+                    ConsoleHelper.PrintColorRed("invalid password");
                     return;
                 }
+
                 _adminFunctions.DoAdminTasks();
                 return;
             }
@@ -72,13 +76,15 @@ namespace MandelsBankenConsole
 
                 if (loggedInUser == null || loggedInUser.Pin != pin)
                 {
-                    Console.WriteLine("Invalid username or password!");
+                    ConsoleHelper.PrintColorRed("Invalid username or password!");
                     return;
                 }
                 Console.Clear();
                 Console.WriteLine($"Welcome {loggedInUser.CustomerName}!");
+
                 Thread.Sleep(750);
-                string[] userMenuOptions = {
+                List<string> userMenuOptions = new List<string> {
+                  
                         "See your accounts and balance",
                         "Transfer between accounts",
                         "Withdraw money",
@@ -94,22 +100,17 @@ namespace MandelsBankenConsole
 
             }
         }
-        public int ShowMenu(string[] menuOptions, string title = "Menu")
+        public int ShowMenu(List<string> menuOptions, string title = "Menu")
         {
-            // Magda.ideer:
-            // -- vi ska ha en inramning
-            // högst upp ska det alltid stå Mandelsbanken + motto
-            // längst ner ska det alltid stå "press Q to log out" or sth
-
 
             int selectedIndex = 0;
-
+            
             while (true)
             {
                 Console.Clear();
                 Console.WriteLine(title);
 
-                for (int i = 0; i < menuOptions.Length; i++)
+                for (int i = 0; i < menuOptions.Count; i++)
                 {
                     if (i == selectedIndex)
                     {
@@ -128,10 +129,10 @@ namespace MandelsBankenConsole
                 switch (keyInfo.Key)
                 {
                     case ConsoleKey.UpArrow:
-                        selectedIndex = (selectedIndex - 1 + menuOptions.Length) % menuOptions.Length;
+                        selectedIndex = (selectedIndex - 1 + menuOptions.Count) % menuOptions.Count;
                         break;
                     case ConsoleKey.DownArrow:
-                        selectedIndex = (selectedIndex + 1) % menuOptions.Length;
+                        selectedIndex = (selectedIndex + 1) % menuOptions.Count;
                         break;
                     case ConsoleKey.Enter:
                         Console.Clear();
@@ -147,27 +148,22 @@ namespace MandelsBankenConsole
             switch (optionIndex)
             {
                 case 0:
-                    Console.WriteLine("Does first option...");
                     _showAccount.ShowAccounts(loggedInUser);
                     Console.ReadLine();
                     break;
                 case 1:
-                    Console.WriteLine("Does second option...");
                     _bankTransfer.MakeTransfer(loggedInUser);
                     Console.ReadLine();
                     break;
                 case 2:
-                    Console.WriteLine("Does third option...");
                     _withdrawMoneyFunctions.WithdrawMoney(loggedInUser);
                     Console.ReadLine();
                     break;
                 case 3:
-                    Console.WriteLine("Does fourth option...");
                     _depositMoneyFunctions.DepositMoney(loggedInUser);
                     Console.ReadLine();
                     break;
                 case 4:
-                    Console.WriteLine("Does fifth option...");
                     _accountManager.CreateAccount(loggedInUser);
                     Console.ReadLine();
                     break;
@@ -180,6 +176,11 @@ namespace MandelsBankenConsole
                     return false;
             }
             return true;
+        }
+
+        public static void ResetLoggedInUser()
+        {
+            loggedInUser = null;
         }
     }
 }
