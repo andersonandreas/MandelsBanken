@@ -4,7 +4,7 @@ using MandelsBankenConsole.Models;
 using MandelsBankenConsole.UserHandler;
 using MandelsBankenConsole.Utilities;
 
-namespace MandelsBankenConsole
+namespace MandelsBankenConsole.MenuInteraction
 {
     public class AdminFunctions
     {

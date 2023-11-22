@@ -1,6 +1,7 @@
 ﻿using MandelsBankenConsole.CurrencyConverter;
 using MandelsBankenConsole.Data;
 using MandelsBankenConsole.InputValidator;
+using MandelsBankenConsole.MenuInteraction;
 using MandelsBankenConsole.Models;
 using MandelsBankenConsole.Utilities;
 

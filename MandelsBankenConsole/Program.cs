@@ -20,12 +20,10 @@ namespace MandelsBankenConsole
             }
             catch (Exception)
             {
-                await Console.Out.WriteLineAsync("The application closing..");
+                Console.WriteLine("The application closing..");
             }
 
         }
-
-
 
 
     }

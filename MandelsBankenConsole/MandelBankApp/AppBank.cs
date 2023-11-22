@@ -1,6 +1,7 @@
 ﻿using MandelsBankenConsole.AccountHandler;
 using MandelsBankenConsole.Data;
 using MandelsBankenConsole.InputValidator;
+using MandelsBankenConsole.MenuInteraction;
 using MandelsBankenConsole.UserHandler;
 
 namespace MandelsBankenConsole.MandelBankApp
