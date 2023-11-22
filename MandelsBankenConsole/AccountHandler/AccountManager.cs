@@ -46,7 +46,7 @@ namespace MandelsBankenConsole.UserHandler
                 .FirstOrDefault();
 
             var number = GenerateAccountNum();
-            var name = "Defualt checking account";
+            var name = "Checking account";
             var type = AccountType.Checking;
             var initialDepo = 0m;
             var currencyId = sekCurrency;
@@ -97,6 +97,7 @@ namespace MandelsBankenConsole.UserHandler
 
 
         //  check if userinput exits in thedatabase from the userinput and if so returning a index of the currencycode and
+        // should be making just one and with a overload insead of two methods..
         private int IdCurrency()
         {
             int currencyId = default;

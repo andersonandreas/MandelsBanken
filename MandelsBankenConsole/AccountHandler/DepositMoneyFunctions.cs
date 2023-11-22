@@ -33,15 +33,13 @@ namespace MandelsBankenConsole.AccountHandler
             //starts the menu // addded the  _menuFunctions,  instead of the call to the static class (MenuFunctions)
             int selectedMenuOption = _menuFunctions.ShowMenu(userAccountsDescription, "Which account would you like to deposit to?");
             Account selectedAccount = userAccounts[selectedMenuOption];
-                
-            //gets amount to deposit
-                Console.WriteLine("How much money would you like to deposit?");
-                decimal depositedMoney = _validateUserInput.Amount();
 
+            //gets amount to deposit
+            decimal depositedMoney = _validateUserInput.Amount("how much money would you like to deposit?");
 
             //gets currency and checks if it matches a currency in the database
             Console.WriteLine("What currency is it in? Write its 3 letter currency code");
-            string currencyInput = _validateUserInput.CodeCurrency();
+            string currencyInput = _validateUserInput.CurrencyCodeUserInput();
 
             //convert currency if not same as in account, changes deposited amount to same currency, adds convertioninformation to the description
             if (currencyInput != selectedAccount.Currency.CurrencyCode)
@@ -61,6 +59,10 @@ namespace MandelsBankenConsole.AccountHandler
                 Console.Clear();
                 ConsoleHelper.PrintColorGreen($"{depositedMoney:# ##0.##} {selectedAccount.Currency.CurrencyCode} deposited to account: {selectedAccount.AccountNumber} - {selectedAccount.AccountName}. \nNew balance: {selectedAccount.Balance:# ##0.##} {selectedAccount.Currency.CurrencyCode}");
             }
+
+            Console.WriteLine("Press enter to return to main menu.");
         }
+
+
     }
 }

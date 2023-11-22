@@ -1,4 +1,5 @@
-﻿using MandelsBankenConsole.Utilities;
+﻿using MandelsBankenConsole.Data;
+using MandelsBankenConsole.Utilities;
 
 namespace MandelsBankenConsole.InputValidator
 {
@@ -8,29 +9,30 @@ namespace MandelsBankenConsole.InputValidator
         private readonly IValidator _numberValidator;
         private readonly IValidator _socialNumber;
         private readonly IValidator _checkLoginSocialAndAdmin;
+        private readonly BankenContext _bankenContext;
 
 
         public ValidateUserInput(IValidator charValidator, IValidator numericValidator,
-            IValidator socialNumber, IValidator checkLoginSocialAndAdmin)
+            IValidator socialNumber, IValidator checkLoginSocialAndAdmin, BankenContext bankenContext)
         {
             _charValidator = charValidator;
             _numberValidator = numericValidator;
             _socialNumber = socialNumber;
             _checkLoginSocialAndAdmin = checkLoginSocialAndAdmin;
+            _bankenContext = bankenContext;
         }
 
-
         public string BaseCurrency() =>
-            ValidateInput("base currency", 3, 4, _charValidator);
+            ValidateInput("base currency", 3, 3, _charValidator);
 
         public string TargetCurrency() =>
-            ValidateInput("target currency", 3, 4, _charValidator);
+            ValidateInput("target currency", 3, 3, _charValidator);
 
         public string CodeCurrency() =>
-    ValidateInput("currency for account", 3, 4, _charValidator);
+    ValidateInput("currency for account", 3, 3, _charValidator);
 
         public string AccountName() =>
-            ValidateInput("account name", 5, 50, _charValidator);
+            ValidateInput("account name", 2, 50, _charValidator);
 
         public string FullName() =>
             ValidateInput("first and last name", 3, 50, _charValidator);
@@ -39,7 +41,7 @@ namespace MandelsBankenConsole.InputValidator
         // only if I have time.
         // maybe add some more here to check how many tries the user trues to log in then let he user contect the bank ater some failed tries.
         public string Pin() =>
-            ValidateInput("pin code", 4, 5, _numberValidator);
+            ValidateInput("pin code", 4, 4, _numberValidator);
 
         public string SocialNumber() =>
             ValidateInput("(social security number YYYYMMDD-XXXX)", 13, 13, _socialNumber);
@@ -56,17 +58,16 @@ namespace MandelsBankenConsole.InputValidator
                 return amount;
             }
 
-            // i need to fix this.....
-            Console.WriteLine("Invalid input for amout...");
-            return 0;
+            // i need to fix this...
+            throw new InvalidOperationException("Invalid input for amount");
         }
 
 
-        public decimal Amount(string messange)
+        public decimal Amount(string message)
         {
 
-            // Enter: fidfjfjdjfdfj
-            string input = ValidateInput(messange, 1, 11, _numberValidator);
+
+            string input = ValidateInput(message, 1, 11, _numberValidator);
 
             if (decimal.TryParse(input, out decimal amount))
             {
@@ -74,9 +75,38 @@ namespace MandelsBankenConsole.InputValidator
             }
 
             // i need to fix this.....
-            Console.WriteLine("Invalid input for amout...");
-            return 0;
+            throw new InvalidOperationException("Invalid input for amount");
         }
+
+
+
+        public string CurrencyCodeUserInput()
+        {
+            string currencyCodeInput = default;
+            bool currencyExists;
+
+            do
+            {
+                var currencyCode = CodeCurrency();
+
+                currencyExists = _bankenContext.Currencies
+                    .Any(c => c.CurrencyCode == currencyCode);
+
+                if (!currencyExists)
+                {
+                    ConsoleHelper.PrintColorRed("Invalid currency code. Please try again.");
+                }
+                else
+                {
+                    currencyCodeInput = currencyCode;
+                }
+
+
+            } while (!currencyExists);
+
+            return currencyCodeInput;
+        }
+
 
 
 

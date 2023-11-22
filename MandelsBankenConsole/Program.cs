@@ -1,5 +1,5 @@
-﻿using MandelsBankenConsole.Data;
-using MandelsBankenConsole.MandelBankApp;
+﻿using MandelsBankenConsole.MandelBankApp;
+using MandelsBankenConsole.Utilities;
 
 namespace MandelsBankenConsole
 {
@@ -11,7 +11,7 @@ namespace MandelsBankenConsole
             try
             {
 
-                var firstConnectionBehindScenes = Task.Run(() => FastenUp());
+                var firstConnectionBehindScenes = Task.Run(() => DbHelper.FastenUp());
 
                 AppBank appBank = new AppBank();
                 appBank.Run();
@@ -20,25 +20,14 @@ namespace MandelsBankenConsole
             }
             catch (Exception)
             {
-                await Console.Out.WriteLineAsync("The appliaction closing..");
+                await Console.Out.WriteLineAsync("The application closing..");
             }
 
         }
 
 
-        // just a linq queryy to start up a connetion behind the scenes.
-        // so when the user is provding succeful login details, the user are directly loged in so the user not waiting for the database connection to appeare.
-        public static void FastenUp()
-        {
-            using (BankenContext context = new BankenContext())
-            {
-                context.Users
-                   .Any();
-            }
 
 
-
-        }
     }
 
 

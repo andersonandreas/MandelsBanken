@@ -24,7 +24,7 @@ namespace MandelsBankenConsole.AccountHandler
 
 
 
-        public async void MakeTransfer(User loggedInUser)
+        public void MakeTransfer(User loggedInUser)
         {
             // "Transfer between accounts" has been chosen
 
@@ -94,8 +94,8 @@ namespace MandelsBankenConsole.AccountHandler
 
 
             Console.WriteLine($"Transfer from {chosenFromAccount.AccountNumber} - {chosenFromAccount.AccountName} ({chosenFromAccount.Currency.CurrencyCode}) to {chosenToAccount.AccountNumber} - {chosenToAccount.AccountName} ({chosenToAccount.Currency.CurrencyCode})");
-            Console.Write($"Enter amount to transfer (in {chosenToAccount.Currency.CurrencyCode}): ");
-            decimal amount = _validateUserInput.Amount();
+
+            decimal amount = _validateUserInput.Amount($"amount to transfer (in {chosenToAccount.Currency.CurrencyCode})");
             decimal amountFrom = 0, amountTo = 0;
             string transactionInfoFrom, transactionInfoTo;
 
@@ -133,7 +133,11 @@ namespace MandelsBankenConsole.AccountHandler
                     ConsoleHelper.PrintColorGreen($"{DbHelper.GetAccountInformation(new List<Account>() { chosenFromAccount })[0]}");
                     ConsoleHelper.PrintColorGreen($"{DbHelper.GetAccountInformation(new List<Account>() { chosenToAccount })[0]}");
                 }
+
             }
+
+            Console.WriteLine("Press enter to return to main menu.");
+
         }
     }
 }

@@ -68,7 +68,7 @@ namespace MandelsBankenConsole.CurrencyConverter
             decimal amount, decimal ConvertResult)
         {
 
-            return $"Convertering from {baseCurrency} to {targetCurrency}: " +
+            return $"Converting from {baseCurrency} to {targetCurrency}: " +
                 $"{amount} {baseCurrency} = {ConvertResult} {targetCurrency}";
         }
 
