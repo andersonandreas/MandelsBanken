@@ -5,14 +5,10 @@ using MandelsBankenConsole.Models;
 using MandelsBankenConsole.UserHandler;
 using MandelsBankenConsole.Utilities;
 
-namespace MandelsBankenConsole
+namespace MandelsBankenConsole.MenuInteraction
 {
     public class MenuFunctions
     {
-
-        //changed the class to public it easier otherwise we need to change all the classes to internal in the whole project
-        // removed the static keyword on the methods. its not needed and we cant use the field of loggedInUser and lpass the other method to each others
-        // we need to put all classes that we build here as Depenciys injections
 
         private readonly BankenContext _bankenContext;
         private readonly AccountManager _accountManager;
@@ -23,8 +19,8 @@ namespace MandelsBankenConsole
         private readonly ShowAccount _showAccount;
         private readonly IValidateUserInput _validateUserInput;
 
-
         private static User loggedInUser;
+
         public MenuFunctions() { }
 
         public MenuFunctions(BankenContext bankenContext, AccountManager accountManager, DepositMoneyFunctions depositMoneyFunctions,
@@ -44,15 +40,10 @@ namespace MandelsBankenConsole
         public void LogIn()
         {
 
-            Console.WriteLine("Welcome to Mandelsbank!");
-            //Thread.Sleep(500);
-
+            Console.WriteLine("Welcome to Mandelsbank!")
             Console.WriteLine("Making banking smooth as almond milk");
-            //Thread.Sleep(750);
-
             Console.WriteLine("Please log in");
 
-            //Console.WriteLine("Enter socialnumber: ");
             string userLogInInput = _validateUserInput.SocialNumber();
             string pin = _validateUserInput.Pin();
 
@@ -84,7 +75,7 @@ namespace MandelsBankenConsole
 
                 Thread.Sleep(750);
                 List<string> userMenuOptions = new List<string> {
-                  
+
                         "See your accounts and balance",
                         "Transfer between accounts",
                         "Withdraw money",
@@ -104,7 +95,7 @@ namespace MandelsBankenConsole
         {
 
             int selectedIndex = 0;
-            
+
             while (true)
             {
                 Console.Clear();
