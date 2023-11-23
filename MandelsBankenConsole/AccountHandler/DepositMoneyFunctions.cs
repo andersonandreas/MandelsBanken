@@ -39,7 +39,6 @@ namespace MandelsBankenConsole.AccountHandler
             decimal depositedMoney = _validateUserInput.Amount("how much money would you like to deposit?");
 
             //gets currency and checks if it matches a currency in the database
-            Console.WriteLine("What currency is it in? Write its 3 letter currency code");
             string currencyInput = _validateUserInput.CurrencyCodeUserInput();
 
             //convert currency if not same as in account, changes deposited amount to same currency, adds convertioninformation to the description
@@ -58,7 +57,7 @@ namespace MandelsBankenConsole.AccountHandler
             if (DbHelper.MakeTransaction(_bankenContext, selectedAccount, depositedMoney, depositDescription))
             {
                 Console.Clear();
-                ConsoleHelper.PrintColorGreen($"{depositedMoney:# ##0.##} {selectedAccount.Currency.CurrencyCode} deposited to account: {selectedAccount.AccountNumber} - {selectedAccount.AccountName}. \nNew balance: {selectedAccount.Balance:# ##0.##} {selectedAccount.Currency.CurrencyCode}");
+                ConsoleHelper.PrintColorGreen($"{depositedMoney:# ##0.##} {currencyInput} deposited to account: {selectedAccount.AccountNumber} - {selectedAccount.AccountName}. \nNew balance: {selectedAccount.Balance:# ##0.##} {selectedAccount.Currency.CurrencyCode}");
             }
 
             Console.WriteLine("Press enter to return to main menu.");

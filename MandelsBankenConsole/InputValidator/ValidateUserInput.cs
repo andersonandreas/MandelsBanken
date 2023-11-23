@@ -29,7 +29,7 @@ namespace MandelsBankenConsole.InputValidator
             ValidateInput("target currency", 3, 3, _charValidator);
 
         public string CodeCurrency() =>
-    ValidateInput("currency for account", 3, 3, _charValidator);
+    ValidateInput("currency code (3 letters)", 3, 3, _charValidator);
 
         public string AccountName() =>
             ValidateInput("account name", 2, 50, _charValidator);
