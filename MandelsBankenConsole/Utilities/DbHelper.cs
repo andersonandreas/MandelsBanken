@@ -112,7 +112,7 @@ namespace MandelsBankenConsole.Utilities
             if (account.Balance + amount < 0)
             {
                 ConsoleHelper.PrintColorRed($"You don't have enough funds in your account to perform this transaction.");
-                ConsoleHelper.PrintColorRed($"Your balance is {account.Balance} {account.Currency.CurrencyCode}, you try to use -{amount} {account.Currency.CurrencyCode}.");
+                ConsoleHelper.PrintColorRed($"Your balance is {account.Balance:# ##0.##} {account.Currency.CurrencyCode}, you try to use {-amount:# ##0.##} {account.Currency.CurrencyCode}.");
                 return false;
             }
 
