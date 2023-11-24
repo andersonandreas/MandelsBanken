@@ -115,11 +115,13 @@ namespace MandelsBankenConsole.AccountHandler
             .Select(u => u.Pin)
             .FirstOrDefault();
 
+            Console.Clear();
+            Console.WriteLine("Please, verify your withdrawal with pin.");
+
+            const int maxAttemps = 3;
             int pinAttempts = 0;
-            while (pinAttempts < 3)
+            while (pinAttempts < maxAttemps)
             {
-                Console.Clear();
-                Console.WriteLine("Please, verify your withdrawal with pin.");
 
                 string pin = _validateUserInput.Pin();
 
@@ -130,6 +132,7 @@ namespace MandelsBankenConsole.AccountHandler
                 else
                 {
                     pinAttempts++;
+                    ConsoleHelper.PrintColorRed($"\nWrong pin. Attempts remaining: {maxAttemps - pinAttempts}.");
                 }
             }
             return false;
