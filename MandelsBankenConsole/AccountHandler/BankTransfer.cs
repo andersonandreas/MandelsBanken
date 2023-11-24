@@ -49,7 +49,7 @@ namespace MandelsBankenConsole.AccountHandler
             }
             else if (userAccounts.Count > 1)
             {
-                choiceFrom = _menuFunctions.ShowMenu(userAccountsDescription, "Which account do you want to transfer from?");
+                choiceFrom = _menuFunctions.ShowMenu(userAccountsDescription, "Which account do you want to transfer from?", "accounts");
             }
             // if user only has 1 account, this is the default "from-account"=0, otherwise the chosen one
             Account chosenFromAccount = userAccounts[choiceFrom];
@@ -64,7 +64,7 @@ namespace MandelsBankenConsole.AccountHandler
             userAccounts.RemoveAt(choiceFrom);
             userAccountsDescription.Add("Transfer to another person");
             choiceTo = _menuFunctions.
-                ShowMenu(userAccountsDescription, $"Transfer from account {chosenFromAccount.AccountNumber} - {chosenFromAccount.AccountName} to?");
+                ShowMenu(userAccountsDescription, $"Transfer from account {chosenFromAccount.AccountNumber} - {chosenFromAccount.AccountName} to?", "accounts");
             Account chosenToAccount = new Account();
 
             // if transfer to another person (last option on the list), get a list of all other users' accounts
@@ -81,7 +81,7 @@ namespace MandelsBankenConsole.AccountHandler
                     }
                 }
                 List<string> allOtherAccountsDesc = DbHelper.GetAccountInformation(allOtherAccounts, false);
-                choiceToOther = _menuFunctions.ShowMenu(allOtherAccountsDesc, $"Transfer from account {chosenFromAccount.AccountNumber} {chosenFromAccount.AccountName} to?");
+                choiceToOther = _menuFunctions.ShowMenu(allOtherAccountsDesc, $"Transfer from account {chosenFromAccount.AccountNumber} {chosenFromAccount.AccountName} to?", "accounts");
                 chosenToAccount = allOtherAccounts[choiceToOther];
             }
             // otherwise assign own to-account

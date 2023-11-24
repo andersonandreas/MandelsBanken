@@ -40,7 +40,7 @@ namespace MandelsBankenConsole.MenuInteraction
         public void LogIn()
         {
 
-            Console.WriteLine("Welcome to Mandelsbank!")
+            Console.WriteLine("Welcome to Mandelsbanken!");
             Console.WriteLine("Making banking smooth as almond milk");
             Console.WriteLine("Please log in");
 
@@ -91,17 +91,36 @@ namespace MandelsBankenConsole.MenuInteraction
 
             }
         }
-        public int ShowMenu(List<string> menuOptions, string title = "Menu")
+        public int ShowMenu(List<string> menuOptions, string title = "Menu", string titleExtra = "alternatives")
         {
 
             int selectedIndex = 0;
 
+            // if the list is long it will be divided into more than one sides
+            // in this case we need arrows right/left to navigate between subsides 
+
+            int maxAlternativesPerSide = 10;
+
+            List<string> partialMenuOptions;
+            int partsOfMenu = (int)(Math.Ceiling((double)menuOptions.Count / maxAlternativesPerSide));
+
+            int amountAlternativesOnThisSide = default;
+            int part = 1;
+
             while (true)
             {
+
+                amountAlternativesOnThisSide = partsOfMenu > part ? maxAlternativesPerSide : ((int)(double)menuOptions.Count - 1) % maxAlternativesPerSide + 1;
+
+                partialMenuOptions = menuOptions.
+                    GetRange(
+                        (part - 1) * maxAlternativesPerSide,
+                        amountAlternativesOnThisSide);
+
                 Console.Clear();
                 Console.WriteLine(title);
 
-                for (int i = 0; i < menuOptions.Count; i++)
+                for (int i = 0; i < amountAlternativesOnThisSide; i++)
                 {
                     if (i == selectedIndex)
                     {
@@ -112,7 +131,11 @@ namespace MandelsBankenConsole.MenuInteraction
                         Console.Write("   ");
                     }
 
-                    Console.WriteLine(menuOptions[i]);
+                    Console.WriteLine(partialMenuOptions[i]);
+                }
+                if (partsOfMenu != 1)
+                {
+                    ConsoleHelper.PrintColorGreen($"Page {part} of {partsOfMenu}. Press right or left to see more {titleExtra}");
                 }
 
                 ConsoleKeyInfo keyInfo = Console.ReadKey();
@@ -120,14 +143,22 @@ namespace MandelsBankenConsole.MenuInteraction
                 switch (keyInfo.Key)
                 {
                     case ConsoleKey.UpArrow:
-                        selectedIndex = (selectedIndex - 1 + menuOptions.Count) % menuOptions.Count;
+                        selectedIndex = (selectedIndex - 1 + partialMenuOptions.Count) % partialMenuOptions.Count;
                         break;
                     case ConsoleKey.DownArrow:
-                        selectedIndex = (selectedIndex + 1) % menuOptions.Count;
+                        selectedIndex = (selectedIndex + 1) % partialMenuOptions.Count;
+                        break;
+                    case ConsoleKey.LeftArrow:
+                        part = (part + partsOfMenu) % partsOfMenu + 1;
+                        selectedIndex = 0;
+                        break;
+                    case ConsoleKey.RightArrow:
+                        part = part % partsOfMenu + 1;
+                        selectedIndex = 0;
                         break;
                     case ConsoleKey.Enter:
                         Console.Clear();
-                        return selectedIndex;
+                        return selectedIndex + (part - 1) * maxAlternativesPerSide;
 
                 }
             }
