@@ -96,8 +96,8 @@ namespace MandelsBankenConsole.UserHandler
         private AccountType AccountTypeChoice() => AccountType.Savings;
 
 
-        //  check if userinput exits in thedatabase from the userinput and if so returning a index of the currencycode and
-        // should be making just one and with a overload insead of two methods..
+        // checks if userinput exist in the database from the userinput and if so returning an index of the currencycode and
+        // should be making just one and with an overload instead of two methods..
         private int IdCurrency()
         {
             int currencyId = default;

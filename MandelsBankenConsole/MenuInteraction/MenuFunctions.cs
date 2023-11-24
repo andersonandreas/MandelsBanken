@@ -61,7 +61,7 @@ namespace MandelsBankenConsole.MenuInteraction
             }
             else
             {
-                // removed the context here we take the context from the injection so we now the we working with just one connetcion object in the whole project
+               
 
                 loggedInUser = DbHelper.GetUserByLogInInput(_bankenContext, userLogInInput);
 

@@ -28,7 +28,7 @@
             }
             catch (Exception e)
             {
-                await Console.Out.WriteLineAsync($"Error : {e.Message}");
+                await Console.Out.WriteLineAsync($"Error: {e.Message}");
                 throw;
             }
         }
