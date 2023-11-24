@@ -39,7 +39,7 @@ namespace MandelsBankenConsole.InputValidator
 
 
         // only if I have time.
-        // maybe add some more here to check how many tries the user trues to log in then let he user contect the bank ater some failed tries.
+        // maybe add some more code here to check how many times the user tries to log in, then don't let he user connect to the bank for a while after some failed tries.
         public string Pin() =>
             ValidateInput("pin code", 4, 4, _numberValidator);
 
@@ -123,7 +123,6 @@ namespace MandelsBankenConsole.InputValidator
             Console.Write($"Enter {promptUser}: ");
             input = Console.ReadLine()?.Trim() ?? string.Empty;
 
-            // har vi kollar admin som for en special behadnling StringComparison.OrdinalIgnoreCase gomfor admin utan att bry sig om stora ller smo bokstaver vi kan skriva aDMin etc.
             if (string.Equals(input, "admin", StringComparison.OrdinalIgnoreCase))
             {
                 if (input.Length == 5)

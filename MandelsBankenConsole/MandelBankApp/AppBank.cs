@@ -12,7 +12,7 @@ namespace MandelsBankenConsole.MandelBankApp
         {
 
             // Our dependies for the banking app 
-            // better to use interface for the type but using class name insteeasd
+            // better to use interface for the type but using class name instead
 
             var context = new BankenContext();
             IValidateUserInput userInputValidator = new ValidateUserInput(new CharValidator(),

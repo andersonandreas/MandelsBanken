@@ -4,7 +4,7 @@ namespace MandelsBankenConsole.InputValidator
 {
     public class ValidateLoginSocial : IValidator
     {
-        // valide the socialnumber on the main page execpting only 19950414-3484 and the word admin;
+        // validates the socialnumber on the main page, accepting only the string "admin" or socialnumber when written YYYYMMDD-XXXX
         public bool Validate(string input)
         {
             if (input.Trim().ToLower() == "admin")
