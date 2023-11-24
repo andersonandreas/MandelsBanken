@@ -39,58 +39,79 @@ namespace MandelsBankenConsole.MenuInteraction
 
         public void LogIn()
         {
-
             Console.WriteLine("Welcome to Mandelsbanken!");
             Console.WriteLine("Making banking smooth as almond milk");
             Console.WriteLine("Please log in");
 
             string userLogInInput = _validateUserInput.SocialNumber();
-            string pin = _validateUserInput.Pin();
 
-            int choice = 0;
-            if (userLogInInput.ToLower() == "admin")
+            const int maxAttempts = 3;
+            int failedAttempts = 0;
+
+            while (failedAttempts < maxAttempts)
             {
-                if (pin != "1234")
+                string pin = _validateUserInput.Pin();
+
+                if (userLogInInput.ToLower() == "admin")
                 {
-                    ConsoleHelper.PrintColorRed("invalid password");
-                    return;
+                    if (pin != "1234")
+                    {
+                        failedAttempts++;
+                        ConsoleHelper.PrintColorRed($"Invalid password. Attempts remaining: {maxAttempts - failedAttempts}");
+                    }
+                    else
+                    {
+                        _adminFunctions.DoAdminTasks();
+                        return;
+                    }
                 }
-
-                _adminFunctions.DoAdminTasks();
-                return;
-            }
-            else
-            {
-               
-
-                loggedInUser = DbHelper.GetUserByLogInInput(_bankenContext, userLogInInput);
-
-                if (loggedInUser == null || loggedInUser.Pin != pin)
+                else
                 {
-                    ConsoleHelper.PrintColorRed("Invalid username or password!");
-                    return;
-                }
-                Console.Clear();
-                Console.WriteLine($"Welcome {loggedInUser.CustomerName}!");
+                    loggedInUser = DbHelper.GetUserByLogInInput(_bankenContext, userLogInInput);
 
-                Thread.Sleep(750);
-                List<string> userMenuOptions = new List<string> {
+                    if (loggedInUser == null || loggedInUser.Pin != pin)
+                    {
+                        failedAttempts++;
+                        ConsoleHelper.PrintColorRed($"Invalid username or password. Attempts remaining: {maxAttempts - failedAttempts}");
+                    }
+                    else
+                    {
 
-                        "See your accounts and balance",
-                        "Transfer between accounts",
-                        "Withdraw money",
-                        "Deposit money",
-                        "Open a new account",
-                        "Log out"
+                        Console.Clear();
+                        Console.WriteLine($"Welcome {loggedInUser.CustomerName}!");
+
+                        Thread.Sleep(750);
+                        List<string> userMenuOptions = new List<string>
+                        {
+                            "See your accounts and balance",
+                            "Transfer between accounts",
+                            "Withdraw money",
+                            "Deposit money",
+                            "Open a new account",
+                            "Log out"
+
                         };
-                while (true)
-                {
-                    choice = ShowMenu(userMenuOptions);
-                    ExecuteMenuOption(choice);
-                }
 
+
+                        while (true)
+                        {
+                            int choice = ShowMenu(userMenuOptions);
+                            ExecuteMenuOption(choice);
+                        }
+                    }
+                }
             }
+
+            ConsoleHelper.PrintColorRed("Maximum number of login attempts has been reached. The login is locked for 3 minutes.");
+            Thread.Sleep(180000);
+            ConsoleHelper.PrintColorGreen("\nReturning to main menu....");
+            Thread.Sleep(2000);
+            Console.Clear();
+            LogIn();
         }
+
+
+
         public int ShowMenu(List<string> menuOptions, string title = "Menu", string titleExtra = "alternatives")
         {
 
