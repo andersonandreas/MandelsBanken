@@ -65,16 +65,19 @@ namespace MandelsBankenConsole.AccountHandler
                     {
                         if (userInput == 1)
                         {
+                            Console.WriteLine("Press enter again to return to main menu.");
                             return;
                         }
 
                         else
                         {
+                            Console.WriteLine("Loading... Did you know that almonds are related to peaches?");
+                            Thread.Sleep(2000);
+
                             var conversionResult = Task.Run(() => _conversion.ConvertCurrency("SEK", accountCurrencyCode, userInput)).Result;
 
                             var (resultIndecimal, infoDescription) = conversionResult;
                             amount = resultIndecimal;
-                            Console.WriteLine("Loading... Did you know that almonds are related to peaches?");
                             break;
                         }
                     }
